@@ -33,4 +33,14 @@ public class PostsImg {
         this.url = url;
         this.posts = posts;
     }
+
+    public PostsImg updatePostsImg(String filename, String url) {
+        if(filename != null) {
+            this.name = filename;
+        }
+        if(url != null) {
+            this.url = url;
+        }
+        return this;
+    }
 }

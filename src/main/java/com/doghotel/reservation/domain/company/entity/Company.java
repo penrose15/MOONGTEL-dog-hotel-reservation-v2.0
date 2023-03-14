@@ -81,4 +81,7 @@ public class Company extends User {
         this.imgUrl = url;
     }
 
+    public void deletePosts() {
+        this.posts = null;
+    }
 }

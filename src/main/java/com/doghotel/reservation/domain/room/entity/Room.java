@@ -1,13 +1,12 @@
 package com.doghotel.reservation.domain.room.entity;
 
 import com.doghotel.reservation.domain.company.entity.Company;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,7 +28,11 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @Setter
     private Company company;
+
+    @OneToMany(mappedBy = "room")
+    private List<RoomImg> roomImgList = new ArrayList<>();
 
     @Builder
     public Room(String roomSize, Integer price, Integer roomCount, Company company) {
