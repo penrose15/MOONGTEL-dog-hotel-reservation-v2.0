@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 @Getter
@@ -31,6 +32,8 @@ public class PostsDto {
     @NotBlank
     @Pattern(regexp = "(오전|오후) ([0]?[0-9]|1[0-2]):[0-5][0-9]")
     private String checkInEndTime;
+
+    private List<String> tagList;
 
     public Posts toEntity() {
         LocalTime startTime = LocalTime.parse(this.checkInStartTime, DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA));

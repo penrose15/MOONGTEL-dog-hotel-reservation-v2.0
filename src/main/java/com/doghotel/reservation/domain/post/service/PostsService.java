@@ -9,6 +9,7 @@ import com.doghotel.reservation.domain.post.entity.Posts;
 import com.doghotel.reservation.domain.post.entity.PostsImg;
 import com.doghotel.reservation.domain.post.repository.PostsRepository;
 import com.doghotel.reservation.domain.post.repository.PostsRepositoryImpl;
+import com.doghotel.reservation.domain.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ public class PostsService {
     private final PostsRepositoryImpl postsRepositoryImpl;
     private final CompanyRepository companyRepository;
     private final PostsImgService postsImgService;
+    private final TagService tagService;
 
     public String createPosts(String email, PostsDto dto, List<MultipartFile> multipartFiles) throws IOException {
         Company company = verifyingEmail(email);
@@ -40,6 +42,8 @@ public class PostsService {
         posts = postsRepository.save(posts);
 
         saveImages(multipartFiles, posts);
+
+        tagService.createTag(dto.getTagList(), posts);
 
         return posts.getTitle();
     }
@@ -61,6 +65,8 @@ public class PostsService {
             throw new IllegalArgumentException("본인의 포스트만 수정 가능합니다.");
         }
         posts.updatePosts(dto);
+
+        tagService.updateTags(dto.getTagList(), posts);
 
         return posts.getTitle();
     }

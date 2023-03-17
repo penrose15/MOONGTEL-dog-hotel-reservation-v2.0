@@ -3,6 +3,7 @@ package com.doghotel.reservation.domain.post.entity;
 import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.post.dto.PostsDto;
 import com.doghotel.reservation.domain.post.dto.PostsUpdateDto;
+import com.doghotel.reservation.domain.tag.entity.PostsTagMap;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,6 +68,9 @@ public class Posts {
 
     @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsImg> postsImgs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    private List<PostsTagMap> postsTagMapList = new ArrayList<>();
 
     @Builder
     public Posts(String title, String content, String latitude, String longitude, String address, String phoneNumber, LocalTime checkInStartTime, LocalTime checkInEndTime, Company company, Double score, List<PostsImg> postsImgs) {

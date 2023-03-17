@@ -46,6 +46,8 @@ public class SecurityConfig{
                 .apply(new CustomDsl())
                 .and()
                 .authorizeRequests()
+                .antMatchers("/h2/**")
+                .permitAll()
                 .antMatchers("/api/login")
                 .permitAll()
                 .antMatchers("/v1/company/account")
