@@ -30,35 +30,51 @@ public class Reservation {
     private LocalDate checkOutDate;
 
     @Column
-    private boolean status;
+    private int dogCount;
 
     @Column
-    private boolean visited;
+    private boolean accept;
+
+    @Column
+    private
+
 
     @Column
     private int totalPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
 
     @Builder
-    public Reservation(LocalDate checkInDate, LocalDate checkOutDate, boolean status, boolean visited, int totalPrice, Customer customer, Company company, Room room) {
+    public Reservation(LocalDate checkInDate, LocalDate checkOutDate, int dogCount, boolean accept, int totalPrice, Customer customer, Company company, Room room) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.status = status;
-        this.visited = visited;
+        this.dogCount = dogCount;
+        this.accept = accept;
         this.totalPrice = totalPrice;
         this.customer = customer;
         this.company = company;
+        this.room = room;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public void setRoom(Room room) {
         this.room = room;
     }
 }

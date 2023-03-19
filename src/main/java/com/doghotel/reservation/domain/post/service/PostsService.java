@@ -85,6 +85,12 @@ public class PostsService {
 
         return postsResponsesDtos;
     }
+    public Page<PostsResponsesDto> searchPages(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        Page<PostsResponsesDto> postsResponsesDtos = postsRepositoryImpl.searchPagesByTitleOrContentOrAddress(keyword, pageable);
+
+        return postsResponsesDtos;
+    }
 
     public void deletePosts(String email, Long postsId) {
         Company company = verifyingEmail(email);

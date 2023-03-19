@@ -64,6 +64,16 @@ public class PostsController {
         return new ResponseEntity(postsResponsesDtoList, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity searchPost(@RequestParam int page,
+                                     @RequestParam int size,
+                                     @RequestParam String keyword) {
+        Page<PostsResponsesDto> postsResponsesDtos = postsService.searchPages(page-1, size, keyword);
+        List<PostsResponsesDto> postsResponsesDtoList = postsResponsesDtos.getContent();
+
+        return new ResponseEntity(postsResponsesDtoList, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long postsId,
                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
