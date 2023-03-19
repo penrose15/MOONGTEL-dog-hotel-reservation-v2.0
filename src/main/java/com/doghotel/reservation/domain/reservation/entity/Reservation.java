@@ -32,11 +32,10 @@ public class Reservation {
     @Column
     private int dogCount;
 
-    @Column
-    private boolean accept;
 
     @Column
-    private
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 
     @Column
@@ -55,11 +54,10 @@ public class Reservation {
     private Room room;
 
     @Builder
-    public Reservation(LocalDate checkInDate, LocalDate checkOutDate, int dogCount, boolean accept, int totalPrice, Customer customer, Company company, Room room) {
+    public Reservation(LocalDate checkInDate, LocalDate checkOutDate, int dogCount, int totalPrice, Customer customer, Company company, Room room) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.dogCount = dogCount;
-        this.accept = accept;
         this.totalPrice = totalPrice;
         this.customer = customer;
         this.company = company;
@@ -77,4 +75,10 @@ public class Reservation {
     public void setRoom(Room room) {
         this.room = room;
     }
+
+    public void changeStatus(String status) {
+        Status status1 = Status.convertToStatus(status);
+        this.status = status1;
+    }
+
 }

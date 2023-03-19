@@ -31,7 +31,6 @@ public class ReservationDto {
                 .checkInDate(checkIn)
                 .checkOutDate(checkOut)
                 .dogCount(this.dogCount)
-                .accept(false)
                 .totalPrice(this.totalPrice)
                 .build();
     }

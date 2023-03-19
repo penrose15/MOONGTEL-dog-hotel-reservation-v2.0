@@ -6,12 +6,11 @@ import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
+import com.doghotel.reservation.domain.reservation.entity.Status;
 import com.doghotel.reservation.domain.reservation.repository.ReservationRepository;
-import com.doghotel.reservation.domain.reservation.repository.ReservedRoomInfoRepository;
 import com.doghotel.reservation.domain.room.entity.Room;
 import com.doghotel.reservation.domain.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final ReservedRoomInfoRepository reservedRoomInfoRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
@@ -153,10 +151,15 @@ public class ReservationService {
         return reservationRepository.findByCustomerIdAfterCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
     }
 
-
-
-    public void deleteReservation() {
-
+    public void deleteReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new NoSuchElementException());
+        if(reservation.getCheckInDate().isBefore(LocalDate.now().minusDays(1))) {
+            reservation.changeStatus(Status.CANCELED.getStatus());
+        }
+        else {
+            throw new IllegalArgumentException("예약은 체크인 하루 전 날짜에만 가능합니다.");
+        }
     }
 
     private boolean isBetweenCheckInCheckOut(Reservation reservation, LocalDate date) {
