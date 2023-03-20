@@ -66,12 +66,7 @@ public class CompanyService {
         Company company = companyRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사"));
 
-        return CompanyResponseDto.builder()
-                .companyName(company.getCompanyName())
-                .address(company.getAddress())
-                .detailAddress(company.getDetailAddress())
-                .representativeNumber(company.getRepresentativeNumber())
-                .build();
+        return CompanyResponseDto.of(company);
     }
 
     public void deleteCompany() {

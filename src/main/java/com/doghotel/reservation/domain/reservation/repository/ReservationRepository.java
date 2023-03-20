@@ -49,7 +49,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "on r.room.roomId = r1.roomId " +
             "where r.customer.customerId = :customerId and " +
             ":currentDate <= r.checkInDate" +
-            " and r.status != com.doghotel.reservation.domain.reservation.entity.Status.CANCELED")
+            " and r.status = com.doghotel.reservation.domain.reservation.entity.Status.ACCEPTED")
     Page<ReservationResponseDto> findByCustomerIdBeforeCheckIn(Long customerId, Pageable pageable, LocalDate currentDate);
 
     @Query("select new com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto(" +
@@ -61,7 +61,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "on r.room.roomId = r1.roomId " +
             "where r.customer.customerId = :customerId " +
             "and :currentDate > r.checkInDate" +
-            " and r.status != com.doghotel.reservation.domain.reservation.entity.Status.CANCELED")
+            " and r.status = com.doghotel.reservation.domain.reservation.entity.Status.VISITED")
     Page<ReservationResponseDto> findByCustomerIdAfterCheckIn(Long customerId, Pageable pageable, LocalDate currentDate);
 
     @Query("select new com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto(" +
@@ -79,7 +79,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "join Company c " +
             "on c.companyId = r.company.companyId " +
             "join Room r1 " +
-            "on r1.room.roomId = r1.roomId " +
+            "on r.room.roomId = r1.roomId " +
             "where r.company.companyId = :companyId ")
     Page<ReservationResponseDto> findByCompanyId(Long companyId, Pageable pageable);
 
@@ -98,7 +98,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "join Company c " +
             "on c.companyId = r.company.companyId " +
             "join Room r1 " +
-            "on r1.room.roomId = r1.roomId " +
+            "on r.room.roomId = r1.roomId " +
             "where r.company.companyId = :companyId " +
             " and r.status = :status")
     Page<ReservationResponseDto> findByCompanyIdAndStatus(Long companyId, Status status, Pageable pageable);

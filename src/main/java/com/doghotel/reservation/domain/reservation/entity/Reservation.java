@@ -2,15 +2,17 @@ package com.doghotel.reservation.domain.reservation.entity;
 
 import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.customer.entity.Customer;
+import com.doghotel.reservation.domain.dog.entity.Dog;
 import com.doghotel.reservation.domain.room.entity.Room;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -52,6 +54,9 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @OneToMany(mappedBy = "reservation",cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter private List<ReservedDogs> reservedDogs = new ArrayList<>();
 
     @Builder
     public Reservation(LocalDate checkInDate, LocalDate checkOutDate, int dogCount, int totalPrice, Customer customer, Company company, Room room) {

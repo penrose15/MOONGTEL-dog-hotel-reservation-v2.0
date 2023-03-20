@@ -2,17 +2,13 @@ package com.doghotel.reservation.domain.reservation.dto;
 
 import lombok.Getter;
 
-import java.util.Map;
+import java.util.List;
 
 @Getter
 public class RegisterReservationDto {
-    private Map<RegisterRoomInfoDto, Integer> roomInfoDtoIntegerMap;
+    private List<RegisterRoomInfoCountDto> registerRoomInfoCountDtos;
     private Long postsId;
     private String checkInDate;
     private String checkOutDate;
-    private int totalPrice;
 
-    public void calculateTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 }

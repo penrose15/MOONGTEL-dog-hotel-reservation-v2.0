@@ -1,11 +1,13 @@
 package com.doghotel.reservation.domain.reservation.dto;
 
+import com.doghotel.reservation.domain.dog.entity.Dog;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 public class ReservationDto {
@@ -14,6 +16,8 @@ public class ReservationDto {
     private int dogCount;
     private Long roomId;
     private int totalPrice;
+
+    private List<Long> dogList;
 
     @Builder
     public ReservationDto(String checkInDate, String checkOutDate, int dogCount, Long roomId, int totalPrice) {

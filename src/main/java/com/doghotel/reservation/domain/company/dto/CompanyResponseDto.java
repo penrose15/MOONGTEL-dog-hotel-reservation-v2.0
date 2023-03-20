@@ -22,4 +22,14 @@ public class CompanyResponseDto {
         this.detailAddress = detailAddress;
         this.representativeNumber = representativeNumber;
     }
+
+    public static CompanyResponseDto of(Company company) {
+        return CompanyResponseDto.builder()
+                .companyName(company.getCompanyName())
+                .email(company.getEmail())
+                .address(company.getAddress())
+                .detailAddress(company.getDetailAddress())
+                .representativeNumber(company.getRepresentativeNumber())
+                .build();
+    }
 }

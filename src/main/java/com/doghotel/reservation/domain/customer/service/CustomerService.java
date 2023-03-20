@@ -66,13 +66,8 @@ public class CustomerService {
     public CustomerProfileViewResponseDto getCustomerProfile(String email) {
         Customer customer = findByEmail(email);
         List<ReviewInfoDto> reviewInfoDtoList = new ArrayList<>(); // 목업 데이터
-        return CustomerProfileViewResponseDto.builder()
-                .username(customer.getUsername())
-                .phone(customer.getPhone())
-                .profile(customer.getProfile())
-                .profileUrl(customer.getProfileUrl())
-                .reviewList(reviewInfoDtoList)
-                .build();
+
+        return CustomerProfileViewResponseDto.of(customer, reviewInfoDtoList);
     }
 
     public void verifyingEmail(String email) {

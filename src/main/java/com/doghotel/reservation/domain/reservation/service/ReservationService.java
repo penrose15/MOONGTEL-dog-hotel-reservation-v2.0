@@ -4,10 +4,14 @@ import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
+import com.doghotel.reservation.domain.dog.entity.Dog;
+import com.doghotel.reservation.domain.dog.repository.DogRepository;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
+import com.doghotel.reservation.domain.reservation.entity.ReservedDogs;
 import com.doghotel.reservation.domain.reservation.entity.Status;
 import com.doghotel.reservation.domain.reservation.repository.ReservationRepository;
+import com.doghotel.reservation.domain.reservation.repository.ReservedDogIdRepository;
 import com.doghotel.reservation.domain.room.entity.Room;
 import com.doghotel.reservation.domain.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -29,6 +34,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
+    private final ReservedDogIdRepository dogIdRepository;
 
     public ReservationCreateDto registerReservation(RegisterReservationDto dto, String email, Long postsId) {
         //validation
@@ -40,19 +46,21 @@ public class ReservationService {
         LocalDate checkIn = LocalDate.parse(dto.getCheckInDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate checkOut = LocalDate.parse(dto.getCheckOutDate(), DateTimeFormatter.ISO_LOCAL_DATE);
 
+        Period diff = Period.between(checkIn, checkOut);
 
-        Map<RegisterRoomInfoDto, Integer> reservationMap = dto.getRoomInfoDtoIntegerMap();
-        List<RegisterRoomInfoDto> registerRoomInfoDtos = new ArrayList<>(reservationMap.keySet());
+        int days = diff.getDays();
+
+        List<RegisterRoomInfoCountDto> registerRoomInfoCountDtos = dto.getRegisterRoomInfoCountDtos();
 
         List<ReservationDto> reservationDtos = new ArrayList<>();
         int totalPrice = 0;
         int totalCount = 0;
 
-        for(int i = 0; i<registerRoomInfoDtos.size(); i++) {
+        for(int i = 0; i<registerRoomInfoCountDtos.size(); i++) {
             //예약 가능 여부 (남는 방이 있는지 확인) 체크
-            RegisterRoomInfoDto roomInfoDto = registerRoomInfoDtos.get(i);
-            long roomId = roomInfoDto.getRoomId();
-            int count = reservationMap.get(roomInfoDto);
+            RegisterRoomInfoCountDto roomInfoDto = registerRoomInfoCountDtos.get(i);
+            long roomId = roomInfoDto.getRoomInfoDto().getRoomId();
+            int count = roomInfoDto.getRoomCount();
 
             Room room = roomRepository.findById(roomId)
                     .orElseThrow(() -> new NoSuchElementException());
@@ -64,6 +72,7 @@ public class ReservationService {
                 LocalDate currentDate = date;
                 int roomCount = reservations.stream()
                         .filter(reservation -> isBetweenCheckInCheckOut(reservation, currentDate))
+                        .filter(reservation -> reservation.getStatus().equals(Status.ACCEPTED))
                         .mapToInt(Reservation::getDogCount)
                         .sum();
                 occupied.put(currentDate, roomCount);
@@ -96,7 +105,7 @@ public class ReservationService {
         ReservationCreateDto reservationCreateDto =  ReservationCreateDto.builder()
                 .reservationDtos(reservationDtos)
                 .totalCount(totalCount)
-                .totalPrice(totalPrice)
+                .totalPrice(totalPrice * days)
                 .build();
         reservationCreateDto.addCustomerEmail(email);
 
@@ -124,7 +133,19 @@ public class ReservationService {
             reservation.setCompany(company);
             reservation.setRoom(room);
 
-            reservationRepository.save(reservation);
+            Reservation reservation1 = reservationRepository.save(reservation);
+            List<Long> dogIdList = reservationDto.getDogList();
+            List<ReservedDogs> reservedDogsList = new ArrayList<>();
+            for(int i = 0; i<dogIdList.size(); i++) {
+                ReservedDogs reservedDogs = ReservedDogs.builder()
+                        .dogId(dogIdList.get(i))
+                        .reservation(reservation1)
+                        .build();
+                reservedDogsList.add(reservedDogs);
+            }
+            dogIdRepository.saveAll(reservedDogsList);
+            reservation1.setReservedDogs(reservedDogsList);
+
         }
     }
     //전체 예약 내역 조회
@@ -151,9 +172,17 @@ public class ReservationService {
         return reservationRepository.findByCustomerIdAfterCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
     }
 
-    public void deleteReservation(Long reservationId) {
+    public void deleteReservation(Long reservationId, String email) {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException());
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoSuchElementException());
+
+        if(!reservation.getCustomer().equals(customer)) {
+            throw new IllegalArgumentException("본인의 예약만 삭제 가능");
+        }
+
         if(reservation.getCheckInDate().isBefore(LocalDate.now().minusDays(1))) {
             reservation.changeStatus(Status.CANCELED.getStatus());
         }
@@ -161,6 +190,8 @@ public class ReservationService {
             throw new IllegalArgumentException("예약은 체크인 하루 전 날짜에만 가능합니다.");
         }
     }
+
+
 
     private boolean isBetweenCheckInCheckOut(Reservation reservation, LocalDate date) {
         LocalDate checkIn = reservation.getCheckInDate();
