@@ -17,11 +17,11 @@ public class Likes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long likesId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posts_id")
     private Posts posts;
 
