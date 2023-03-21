@@ -40,7 +40,7 @@ public class DogService {
         return dog.getDogName();
     }
 
-    public void updateDog(long dogId, DogUpdateDto dto, MultipartFile file, String email) {
+    public String updateDog(long dogId, DogUpdateDto dto, MultipartFile file, String email) {
         Customer customer = verifyingService.findByEmail(email); //verify
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
@@ -50,12 +50,19 @@ public class DogService {
 
         dog.updateDog(dto, filename, url);
 
-        dogRepository.save(dog);
+        dog = dogRepository.save(dog);
+
+        return dog.getDogName();
     }
 
-    public DogResponseDto findById(Long dogId) {
+    public DogResponseDto findById(Long dogId, String email) {
+        Customer customer = verifyingService.findByEmail(email);
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
+
+        if(!dog.getCustomer().equals(customer)) {
+            throw new IllegalArgumentException("본인의 강아지만 조회 가능합니다.");
+        }
 
         return DogResponseDto.of(dog);
     }
@@ -69,7 +76,14 @@ public class DogService {
         .collect(Collectors.toList());
     }
 
-    public void deleteDog(Long dogId) {
+    public void deleteDog(Long dogId, String email) {
+        Dog dog = dogRepository.findById(dogId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강아지"));
+        Customer customer = verifyingService.findByEmail(email);
+        if(!dog.getCustomer().equals(customer)) {
+            throw new IllegalArgumentException("다른 강아지는 삭제불가");
+        }
+
         dogRepository.deleteById(dogId);
     }
 

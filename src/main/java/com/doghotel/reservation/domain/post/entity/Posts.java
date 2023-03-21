@@ -27,6 +27,9 @@ public class Posts {
         if(this.score == null) {
             this.score = 0.0;
         }
+        if(this.likeCount == null) {
+            this.likeCount = 0;
+        }
     }
 
     @Id
@@ -50,6 +53,8 @@ public class Posts {
     private String address;
 
     private Double score;
+
+    private Integer likeCount;
 
     @Column
     private String phoneNumber;
@@ -123,5 +128,13 @@ public class Posts {
             this.checkInEndTime = endTime;
         }
 
+    }
+
+    public void plusLikeCount() {
+        this.likeCount += 1;
+    }
+
+    public void minusLikeCount() {
+        this.likeCount -=1;
     }
 }
