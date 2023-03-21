@@ -8,4 +8,5 @@
 - 불필요한 양방향 연관관계 제거
 - Controller에 위치한 Entity -> DTO로 대체
 - MapStruct -> DTO 내부 Entity로 변환하는 로직 추가
+- @Setter 삭제
 
