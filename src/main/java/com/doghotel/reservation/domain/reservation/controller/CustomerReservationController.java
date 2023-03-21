@@ -1,8 +1,6 @@
 package com.doghotel.reservation.domain.reservation.controller;
 
-import com.doghotel.reservation.domain.reservation.dto.RegisterReservationDto;
-import com.doghotel.reservation.domain.reservation.dto.ReservationCreateDto;
-import com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto;
+import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.service.ReservationService;
 import com.doghotel.reservation.global.config.security.userdetail.CustomUserDetails;
 import com.doghotel.reservation.global.response.MultiResponseDto;
@@ -22,7 +20,7 @@ public class CustomerReservationController {
 
     private final ReservationService reservationService;
 
-    @PostMapping("/{postsId}")
+    @PostMapping("/{postsId}") //post 상세 페이지 -> 예약 상세 페이지로 이동
     public ResponseEntity registerReservation(@RequestBody RegisterReservationDto dto,
                                               @PathVariable(name = "postsId") Long postsId,
                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -32,16 +30,24 @@ public class CustomerReservationController {
         return new ResponseEntity(reservationCreateDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{postsId}/details")
+    @PostMapping("/{postsId}/details") //예약 상세 페이지에서 예약 완료
     public ResponseEntity createReservation(@RequestBody ReservationCreateDto dto,
                                             @PathVariable(name = "postsId")Long postsId,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        reservationService.createReservation(dto, userDetails.getEmail(), postsId);
+        ReservationIdDto reservationIdDto = reservationService.createReservation(dto, userDetails.getEmail(), postsId);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(reservationIdDto,HttpStatus.CREATED);
     }
 
-    @GetMapping()
+    @PostMapping("/reservation-complete") //예약 확인 페이지
+    public ResponseEntity finalReservation(@RequestBody ReservationIdDto dto,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<ReservationCompleteDto> reservationCompleteDtos = reservationService.reservationComplete(dto, userDetails.getEmail());
+
+        return new ResponseEntity(reservationCompleteDtos, HttpStatus.OK);
+    }
+
+    @GetMapping
     public ResponseEntity findReservations(@RequestParam int page,
                                            @RequestParam int size,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {

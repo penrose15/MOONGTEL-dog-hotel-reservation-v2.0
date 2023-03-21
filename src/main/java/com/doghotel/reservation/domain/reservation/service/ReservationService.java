@@ -4,8 +4,11 @@ import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
+import com.doghotel.reservation.domain.customer.service.CustomerVerifyingService;
+import com.doghotel.reservation.domain.dog.dto.DogResponseDto;
 import com.doghotel.reservation.domain.dog.entity.Dog;
 import com.doghotel.reservation.domain.dog.repository.DogRepository;
+import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import com.doghotel.reservation.domain.reservation.entity.ReservedDogs;
@@ -25,6 +28,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -32,14 +36,14 @@ import java.util.*;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
-    private final CustomerRepository customerRepository;
+    private final CustomerVerifyingService customerVerifyingService;
     private final CompanyRepository companyRepository;
     private final ReservedDogIdRepository dogIdRepository;
+    private final DogService dogService;
 
     public ReservationCreateDto registerReservation(RegisterReservationDto dto, String email, Long postsId) {
         //validation
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
         Company company = companyRepository.findByPostsId(postsId)
                 .orElseThrow(() -> new NoSuchElementException());
 
@@ -112,16 +116,16 @@ public class ReservationService {
         return reservationCreateDto;
     }
 
-    public void createReservation(ReservationCreateDto reservationCreateDto, String email, Long postsId) {
+    public ReservationIdDto createReservation(ReservationCreateDto reservationCreateDto, String email, Long postsId) {
         if (!reservationCreateDto.getCustomerEmail().equals(email)) {
             throw new IllegalArgumentException("중간에 사용자가 바뀜...?");
         }
 
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
         Company company = companyRepository.findByPostsId(postsId)
                 .orElseThrow(() -> new NoSuchElementException());
 
+        List<Long> reservationIdList = new ArrayList<>();
         List<ReservationDto> reservationDtos = reservationCreateDto.getReservationDtos();
         for (ReservationDto reservationDto : reservationDtos) {
             Reservation reservation = reservationDto.toEntity();
@@ -145,36 +149,66 @@ public class ReservationService {
             }
             dogIdRepository.saveAll(reservedDogsList);
             reservation1.setReservedDogs(reservedDogsList);
-
+            reservationIdList.add(reservation1.getReservationId());
         }
+
+        return new ReservationIdDto(reservationIdList);
     }
+    public List<ReservationCompleteDto> reservationComplete(ReservationIdDto dto, String email) {
+        List<ReservationCompleteDto> reservationCompleteDtos = new ArrayList<>();
+
+        List<Long> reservationIdList = dto.getReservationIdList();
+        for (Long aLong : reservationIdList) {
+            Reservation reservation = reservationRepository.findById(aLong)
+                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 예약"));
+            List<ReservedDogs> reservedDogs = dogIdRepository.findByReservationId(reservation.getReservationId());
+            List<Long> reservedDogIds = reservedDogs.stream()
+                    .map(ReservedDogs::getDogId)
+                    .collect(Collectors.toList());
+            List<DogResponseDto> dogResponseDtos = new ArrayList<>();
+            for (Long dogId : reservedDogIds) {
+                DogResponseDto dogResponseDto = dogService.findById(dogId, email);
+                dogResponseDtos.add(dogResponseDto);
+            }
+            String checkInDate = reservation.getCheckInDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+            String checkOutDate = reservation.getCheckInDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+            ReservationCompleteDto reservationCompleteDto = ReservationCompleteDto.builder()
+                    .reservedDogDtos(dogResponseDtos)
+                    .address(reservation.getCompany().getPosts().getAddress())
+                    .roomSize(reservation.getRoom().getRoomSize())
+                    .checkInDate(checkInDate)
+                    .checkOutDate(checkOutDate)
+                    .totalPrice(reservation.getTotalPrice())
+                    .build();
+            reservationCompleteDtos.add(reservationCompleteDto);
+        }
+        return reservationCompleteDtos;
+
+    }
+
     //전체 예약 내역 조회
     public Page<ReservationResponseDto> findReservationList(String email, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
         return reservationRepository.findByCustomerId(customer.getCustomerId(), pageable);
     }
 
     //가기전 예약 내역
     public Page<ReservationResponseDto> findReservationBeforeCheckIn(String email, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
         return reservationRepository.findByCustomerIdBeforeCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
     }
 
     //갔다 온 예약 내역
     public Page<ReservationResponseDto> findReservationAfterCheckIn(String email, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
         return reservationRepository.findByCustomerIdAfterCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
     }
 
     public void deleteReservation(Long reservationId, String email) {
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+        Customer customer = customerVerifyingService.findByEmail(email);
 
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NoSuchElementException());

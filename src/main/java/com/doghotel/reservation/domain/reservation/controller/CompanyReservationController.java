@@ -31,6 +31,7 @@ public class CompanyReservationController {
         return new ResponseEntity(new MultiResponseDto<>(responseDtoList, reservationPage), HttpStatus.ACCEPTED);
     }
 
+    //예약 상태 별 조회
     @GetMapping("/list/{status}")
     public ResponseEntity showReservationByStatus(@PathVariable(name = "status") String status,
                                                    @RequestParam int page,
@@ -42,6 +43,7 @@ public class CompanyReservationController {
         return new ResponseEntity(new MultiResponseDto<>(responseDtoList ,reservationResponseDtos), HttpStatus.ACCEPTED);
     }
 
+    //예약 상태 변경
     @PatchMapping("/{reservationId}")
     public ResponseEntity changeReservationStatus(@PathVariable(name = "reservationId")Long reservationId,
                                                   @RequestParam String status,
@@ -51,6 +53,7 @@ public class CompanyReservationController {
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
+    //예약 거절
     @DeleteMapping("/{reservationId}")
     public ResponseEntity cancelReservationStatus(@PathVariable(name = "reservationId")Long reservationId,
                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
