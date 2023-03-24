@@ -85,6 +85,13 @@ public class TagService {
         return "update tag";
     }
 
+    public List<String> findTagsByPostsId(Long postsId) {
+        List<PostsTagMap> postsTagMaps = postTagMapRepository.findByPostsPostsId(postsId);
+
+        return postsTagMaps.stream()
+                .map(postsTagMap -> postsTagMap.getTag().getTitle()).collect(Collectors.toList());
+    }
+
 
 
 }

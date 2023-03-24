@@ -4,6 +4,8 @@ import com.doghotel.reservation.domain.room.entity.Room;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class RoomDto {
     private String roomSize;
@@ -24,4 +26,6 @@ public class RoomDto {
                 .price(this.price)
                 .build();
     }
+
+
 }

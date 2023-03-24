@@ -10,11 +10,9 @@ import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
 import com.doghotel.reservation.domain.review.dto.ReviewInfoDto;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -54,7 +52,8 @@ public class CustomerService {
 
     public String updateCustomerProfile(String email, MultipartFile file) throws IOException {
         Customer customer = findByEmail(email);
-        String filename = awss3Service.originalFileName(file);
+        String originalFilename = awss3Service.originalFileName(file);
+        String filename = awss3Service.filename(originalFilename);
         String url = awss3Service.uploadFile(file);
 
         customer.updateCustomerProfile(url, filename);

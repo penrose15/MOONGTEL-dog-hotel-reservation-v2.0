@@ -1,9 +1,6 @@
 package com.doghotel.reservation.domain.post.controller;
 
-import com.doghotel.reservation.domain.post.dto.PostsDto;
-import com.doghotel.reservation.domain.post.dto.PostsImgIdsDto;
-import com.doghotel.reservation.domain.post.dto.PostsResponsesDto;
-import com.doghotel.reservation.domain.post.dto.PostsUpdateDto;
+import com.doghotel.reservation.domain.post.dto.*;
 import com.doghotel.reservation.domain.post.service.PostsService;
 import com.doghotel.reservation.domain.tag.service.TagService;
 import com.doghotel.reservation.global.config.security.userdetail.CustomUserDetails;
@@ -36,24 +33,21 @@ public class PostsController {
 
     @PatchMapping("/{post-id}")
     public String updatePosts(@PathVariable(name = "post-id") Long postsId,
-                                      @RequestBody PostsUpdateDto dto,
-                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                      @RequestPart(name = "dto") PostsUpdateDto dto,
+                                      @RequestPart(name = "file") List<MultipartFile> file,
+                                      @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         String email = userDetails.getUsername();
-        String title = postsService.updatePosts(email, postsId, dto);
 
-        return title;
+        return postsService.updatePosts(email, postsId, dto, file);
     }
 
-    @PatchMapping("/image/{post-id}") //다시 만들기 -> 사진 리스트 들어오면 사진이랑
-    public ResponseEntity<Void> updatePostsImg(@PathVariable(name = "post-id") Long postsId,
-                               @RequestPart(value = "dto") PostsImgIdsDto dto,
-                               @RequestPart(value = "files") List<MultipartFile> files,
-                               @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
-        String email = userDetails.getUsername();
-        postsService.updatePostsImg(dto.getPostsImgIds(), files, postsId);
+    @GetMapping("/{posts-id}")
+    public ResponseEntity showPost(@PathVariable(name = "posts-id")Long postsId) {
+        PostsResponseDto response = postsService.getPost(postsId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
+
 
     @GetMapping
     public ResponseEntity showPosts(@RequestParam int page,

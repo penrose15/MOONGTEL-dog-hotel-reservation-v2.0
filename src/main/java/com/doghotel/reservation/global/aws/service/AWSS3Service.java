@@ -29,8 +29,8 @@ public class AWSS3Service {
     private String bucketName;
 
     public String uploadFile(MultipartFile multipartFile) throws IOException {
-
-        String fileName = originalFileName(multipartFile);
+        String originalFileName = originalFileName(multipartFile);
+        String fileName = filename(originalFileName);
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
@@ -48,15 +48,46 @@ public class AWSS3Service {
 
         return url;
     }
-
+    public Long fileSize(MultipartFile multipartFile) {
+        try {
+            return multipartFile.getSize();
+        } catch (Exception e) {
+            log.error("file not exist", e);
+        } return -1L;
+    }
     public String originalFileName(MultipartFile multipartFile) {
         try {
-            return CommonUtils.buildFileName(multipartFile.getOriginalFilename());
+            return multipartFile.getOriginalFilename();
+        } catch (Exception e) {
+            log.error("file not exist", e);
+        }
+        return null;
+    }
+
+    public String filename(String filename) {
+        try {
+            return CommonUtils.buildFileName(filename);
         } catch (Exception e) {
             log.error("Can not filename, ", e);
             return "filename";
         }
 
+    }
+
+    public String deleteFile(String filename) {
+        String result = "file deleted";
+        try {
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucketName, filename);
+            if(isObjectExist) {
+                amazonS3Client.deleteObject(bucketName, filename);
+            } else {
+                result = "file not found";
+            }
+        } catch (Exception e) {
+            log.debug("delete failed", e);
+        }
+
+        return result;
     }
 
 }

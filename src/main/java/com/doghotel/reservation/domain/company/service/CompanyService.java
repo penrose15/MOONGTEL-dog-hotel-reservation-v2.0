@@ -52,8 +52,8 @@ public class CompanyService {
     public String updateCompanyImg(String email, MultipartFile file) throws IOException {
         Company company = companyRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사"));
-
-        String filename = awss3Service.originalFileName(file);
+        String originalFileName = awss3Service.originalFileName(file);
+        String filename = awss3Service.filename(originalFileName);
         String url = awss3Service.uploadFile(file);
 
         company.updateCompanyImg(filename, url);

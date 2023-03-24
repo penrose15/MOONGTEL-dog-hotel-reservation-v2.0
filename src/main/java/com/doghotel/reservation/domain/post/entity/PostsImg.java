@@ -17,6 +17,9 @@ public class PostsImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postsImgId;
 
+    @Column
+    private String originalFilename;
+
     @Column(nullable = false)
     private String name;
 
@@ -28,19 +31,11 @@ public class PostsImg {
     private Posts posts;
 
     @Builder
-    public PostsImg(String name, String url, Posts posts) {
+    public PostsImg(String originalFilename, String name, String url, Posts posts) {
+        this.originalFilename = originalFilename;
         this.name = name;
         this.url = url;
         this.posts = posts;
     }
 
-    public PostsImg updatePostsImg(String filename, String url) {
-        if(filename != null) {
-            this.name = filename;
-        }
-        if(url != null) {
-            this.url = url;
-        }
-        return this;
-    }
 }

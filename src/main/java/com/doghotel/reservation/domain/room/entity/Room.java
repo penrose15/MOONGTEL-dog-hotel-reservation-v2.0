@@ -28,7 +28,6 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    @Setter
     private Company company;
 
     @OneToMany(mappedBy = "room")
@@ -39,6 +38,10 @@ public class Room {
         this.roomSize = roomSize;
         this.price = price;
         this.roomCount = roomCount;
+        this.company = company;
+    }
+
+    public void addCompany(Company company) {
         this.company = company;
     }
 }

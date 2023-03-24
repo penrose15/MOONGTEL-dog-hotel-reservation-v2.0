@@ -32,8 +32,9 @@ public class DogService {
         dogRepository.save(dog);
         dog.designateCustomer(customer);
 
-        String filename = awss3Service.originalFileName(file);
-        String url = awss3Service.originalFileName(file);
+        String originalFileName = awss3Service.originalFileName(file);
+        String filename = awss3Service.filename(originalFileName);
+        String url = awss3Service.filename(filename);
 
         dog.addImage(filename, url);
 
@@ -45,8 +46,9 @@ public class DogService {
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
 
-        String filename = awss3Service.originalFileName(file);
-        String url = awss3Service.originalFileName(file);
+        String originalFileName = awss3Service.originalFileName(file);
+        String filename = awss3Service.filename(originalFileName);
+        String url = awss3Service.filename(filename);
 
         dog.updateDog(dto, filename, url);
 

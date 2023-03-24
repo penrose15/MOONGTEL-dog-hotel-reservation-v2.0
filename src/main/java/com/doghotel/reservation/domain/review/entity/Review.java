@@ -26,8 +26,6 @@ public class Review {
     @Column(length = 500)
     private String content;
 
-    @Max(5)
-    @Min(1)
     @Column(nullable = false)
     private Double score;
 
