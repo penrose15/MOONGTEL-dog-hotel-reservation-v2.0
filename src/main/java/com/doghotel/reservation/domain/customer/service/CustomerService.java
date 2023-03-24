@@ -41,7 +41,7 @@ public class CustomerService {
         return customer.getUsername();
 
     }
-    public String updateCustomer(String email,  CustomerUpdateRequestDto request) throws IOException {
+    public String updateCustomer(String email,  CustomerUpdateRequestDto request) {
         Customer customer = findByEmail(email);
 
         customer = customer.updateCustomer(request);

@@ -38,7 +38,6 @@ public class CompanyServiceTest {
     @Mock
     private AWSS3Service awss3Service;
 
-    @Spy
     @InjectMocks
     private CompanyService companyService;
 
