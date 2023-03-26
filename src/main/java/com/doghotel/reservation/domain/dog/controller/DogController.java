@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -22,9 +24,9 @@ public class DogController {
     private final DogService dogService;
 
     @PostMapping
-    public ResponseEntity<String> addDog(@RequestPart(name = "dto")DogPostDto dto,
+    public ResponseEntity<String> addDog(@RequestPart(name = "dto") @Valid DogPostDto dto,
                                  @RequestPart(name = "file")MultipartFile file,
-                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                 @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         String dogName = dogService.addDogs(dto, file, userDetails.getEmail());
         return new ResponseEntity<>(dogName, HttpStatus.CREATED);
     }
@@ -33,7 +35,7 @@ public class DogController {
     public ResponseEntity<String> updateDog(@PathVariable(name = "dog-id")Long dogId,
                                             @RequestPart(name = "dto")DogUpdateDto dto,
                                             @RequestPart(name = "file") MultipartFile file,
-                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                            @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         String dogName = dogService.updateDog(dogId, dto, file, userDetails.getEmail());
         return new ResponseEntity<>(dogName, HttpStatus.OK);
     }
@@ -41,14 +43,14 @@ public class DogController {
     @GetMapping("/{dog-id}")
     public ResponseEntity<DogResponseDto> showDogByDogId(@PathVariable(name = "dog-id") Long dogId,
                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        DogResponseDto response = dogService.findById(dogId, userDetails.getEmail());
+        DogResponseDto response = dogService.showDogByDogId(dogId, userDetails.getEmail());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/dogs")
     public ResponseEntity<List<DogListResponseDto>> showMyDogs(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<DogListResponseDto> responses = dogService.findAll(userDetails.getEmail());
+        List<DogListResponseDto> responses = dogService.showMyDogs(userDetails.getEmail());
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

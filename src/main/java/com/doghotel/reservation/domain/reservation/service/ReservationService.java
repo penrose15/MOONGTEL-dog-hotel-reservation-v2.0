@@ -3,11 +3,8 @@ package com.doghotel.reservation.domain.reservation.service;
 import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.customer.entity.Customer;
-import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
 import com.doghotel.reservation.domain.customer.service.CustomerVerifyingService;
 import com.doghotel.reservation.domain.dog.dto.DogResponseDto;
-import com.doghotel.reservation.domain.dog.entity.Dog;
-import com.doghotel.reservation.domain.dog.repository.DogRepository;
 import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
@@ -167,7 +164,7 @@ public class ReservationService {
                     .collect(Collectors.toList());
             List<DogResponseDto> dogResponseDtos = new ArrayList<>();
             for (Long dogId : reservedDogIds) {
-                DogResponseDto dogResponseDto = dogService.findById(dogId, email);
+                DogResponseDto dogResponseDto = dogService.showDogByDogId(dogId, email);
                 dogResponseDtos.add(dogResponseDto);
             }
             String checkInDate = reservation.getCheckInDate().format(DateTimeFormatter.ISO_LOCAL_DATE);

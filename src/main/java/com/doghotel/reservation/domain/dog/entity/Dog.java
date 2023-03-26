@@ -43,7 +43,7 @@ public class Dog {
     @Column(length = 500)
     private String etc;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class DogService {
     private final AWSS3Service awss3Service;
     private final CustomerVerifyingService verifyingService;
 
-    public String addDogs(DogPostDto dogPostDto, MultipartFile file, String email) {
+    public String addDogs(DogPostDto dogPostDto, MultipartFile file, String email) throws IOException {
         Customer customer = verifyingService.findByEmail(email);
         Dog dog = dogPostDto.toEntity();
         dogRepository.save(dog);
@@ -34,21 +35,21 @@ public class DogService {
 
         String originalFileName = awss3Service.originalFileName(file);
         String filename = awss3Service.filename(originalFileName);
-        String url = awss3Service.filename(filename);
+        String url = awss3Service.uploadFile(file);
 
         dog.addImage(filename, url);
 
         return dog.getDogName();
     }
 
-    public String updateDog(long dogId, DogUpdateDto dto, MultipartFile file, String email) {
+    public String updateDog(Long dogId, DogUpdateDto dto, MultipartFile file, String email) throws IOException {
         Customer customer = verifyingService.findByEmail(email); //verify
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
 
         String originalFileName = awss3Service.originalFileName(file);
         String filename = awss3Service.filename(originalFileName);
-        String url = awss3Service.filename(filename);
+        String url = awss3Service.uploadFile(file);
 
         dog.updateDog(dto, filename, url);
 
@@ -57,7 +58,7 @@ public class DogService {
         return dog.getDogName();
     }
 
-    public DogResponseDto findById(Long dogId, String email) {
+    public DogResponseDto showDogByDogId(Long dogId, String email) {
         Customer customer = verifyingService.findByEmail(email);
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
@@ -69,7 +70,7 @@ public class DogService {
         return DogResponseDto.of(dog);
     }
 
-    public List<DogListResponseDto> findAll(String email) {
+    public List<DogListResponseDto> showMyDogs(String email) {
         Customer customer = verifyingService.findByEmail(email);
         List<Dog> list = dogRepository.findByCustomerCustomerId(customer.getCustomerId());
 
