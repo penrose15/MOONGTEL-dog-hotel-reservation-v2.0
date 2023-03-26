@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class PostsLikesService {
+public class PostsFindService {
     private final PostsRepository postsRepository;
 
     public Posts findById(Long postsId) {
