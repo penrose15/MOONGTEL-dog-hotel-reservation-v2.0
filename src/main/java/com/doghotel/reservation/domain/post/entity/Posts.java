@@ -1,7 +1,6 @@
 package com.doghotel.reservation.domain.post.entity;
 
 import com.doghotel.reservation.domain.company.entity.Company;
-import com.doghotel.reservation.domain.post.dto.PostsDto;
 import com.doghotel.reservation.domain.post.dto.PostsUpdateDto;
 import com.doghotel.reservation.domain.tag.entity.PostsTagMap;
 import lombok.AccessLevel;
@@ -9,8 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 @Entity
 @Getter
+@Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Posts {
 
@@ -39,8 +41,7 @@ public class Posts {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(length = 2000,nullable = false)
     private String content;
 
     @Column(nullable = false)
@@ -56,6 +57,7 @@ public class Posts {
 
     private Integer likeCount;
 
+    @Pattern(regexp = "^010-\\d{3,4}-\\d{4}$")
     @Column
     private String phoneNumber;
 
@@ -92,11 +94,11 @@ public class Posts {
         this.postsImgs = postsImgs;
     }
 
-    public void setCompany(Company company) {
+    public void designateCompany(Company company) {
         this.company = company;
     }
 
-    public void setPostsImgs(List<PostsImg> postsImgs) {
+    public void addPostsImgs(List<PostsImg> postsImgs) {
         this.postsImgs = postsImgs;
     }
 
@@ -128,6 +130,10 @@ public class Posts {
             this.checkInEndTime = endTime;
         }
 
+    }
+
+    public void initLikesCountForTest() {
+        this.likeCount = 1;
     }
 
     public void plusLikeCount() {

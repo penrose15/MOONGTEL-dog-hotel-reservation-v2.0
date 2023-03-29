@@ -37,7 +37,7 @@ public class Reservation {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.RESERVED;
 
 
     @Column

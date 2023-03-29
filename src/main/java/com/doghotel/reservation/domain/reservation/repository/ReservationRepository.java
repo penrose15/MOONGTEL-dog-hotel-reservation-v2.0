@@ -32,16 +32,25 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 "r1.roomId, " +
                 "r1.roomSize) " +
             "from Reservation r " +
-            "join Company c " +
-            "on r.company.companyId = c.companyId " +
-            "join Room r1 " +
+            "inner join Company c " +
+            "on c.companyId = r.company.companyId " +
+            "inner join Room r1 " +
             "on r.room.roomId = r1.roomId " +
             "where r.customer.customerId = :customerId " +
-            " and r.status != com.doghotel.reservation.domain.reservation.entity.Status.CANCELED")
+            " and r.status in ('RESERVED' , 'ACCEPTED', 'VISITED') ")
     Page<ReservationResponseDto> findByCustomerId(Long customerId, Pageable pageable);
 
     @Query("select new com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto(" +
-            "r.reservationId, r.checkInDate, r.checkOutDate, r.dogCount, r.totalPrice, r.status, c.companyId, c.companyName, r1.roomId, r1.roomSize) " +
+            "r.reservationId, " +
+            "r.checkInDate, " +
+            "r.checkOutDate, " +
+            "r.dogCount, " +
+            "r.totalPrice, " +
+            "r.status, " +
+            "c.companyId, " +
+            "c.companyName, " +
+            "r1.roomId, " +
+            "r1.roomSize) " +
             "from Reservation r " +
             "join Company c " +
             "on r.company.companyId = c.companyId " +
@@ -49,7 +58,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "on r.room.roomId = r1.roomId " +
             "where r.customer.customerId = :customerId and " +
             ":currentDate <= r.checkInDate" +
-            " and r.status = com.doghotel.reservation.domain.reservation.entity.Status.ACCEPTED")
+            " and r.status = com.doghotel.reservation.domain.reservation.entity.Status.ACCEPTED ")
     Page<ReservationResponseDto> findByCustomerIdBeforeCheckIn(Long customerId, Pageable pageable, LocalDate currentDate);
 
     @Query("select new com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto(" +

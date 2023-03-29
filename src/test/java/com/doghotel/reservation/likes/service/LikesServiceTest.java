@@ -24,10 +24,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
-@ExtendWith(MockitoExtension.class)
+
 public class LikesServiceTest {
 
-    @Mock
+    @Mock@ExtendWith(MockitoExtension.class)
     private LikesRepository likesRepository;
     @Mock
     private PostsFindService postsFindService;

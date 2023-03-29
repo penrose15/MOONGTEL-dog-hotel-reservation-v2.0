@@ -7,6 +7,7 @@ import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.company.service.CompanyService;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
+import com.doghotel.reservation.domain.post.dto.PostsResponsesDto;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -153,4 +156,6 @@ public class CompanyServiceTest {
 
         assertEquals(responseDto.getCompanyName(), result.getCompanyName());
     }
+
+
 }

@@ -7,8 +7,7 @@ import com.doghotel.reservation.domain.like.dto.LikeResponsesDto;
 import com.doghotel.reservation.domain.like.entity.Likes;
 import com.doghotel.reservation.domain.like.repository.LikesRepository;
 import com.doghotel.reservation.domain.post.entity.Posts;
-import com.doghotel.reservation.domain.post.service.PostsLikesService;
-import com.doghotel.reservation.domain.post.service.PostsService;
+import com.doghotel.reservation.domain.post.service.PostsFindService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,24 +21,22 @@ import java.util.stream.Collectors;
 @Service
 public class LikesService {
     private final LikesRepository likesRepository;
-    private final PostsLikesService postsLikesService;
+    private final PostsFindService postsFindService;
     private final CustomerVerifyingService verifyingService;
 
     public void changeLikes(String email, Long postsId) {
         Customer customer = verifyingService.findByEmail(email);
-        Posts posts = postsLikesService.findById(postsId);
+        Posts posts = postsFindService.findById(postsId);
 
         Optional<Likes> likes = likesRepository.findLikesByPostsIdAndCustomerId(postsId, customer.getCustomerId());
         if(likes.isPresent()) {
             cancelLikes(likes.get(), posts);
         } else {
-            addLikes(email, postsId);
+            addLikes(customer, posts);
         }
     }
 
-    private void addLikes(String email, Long postsId) {
-        Customer customer = verifyingService.findByEmail(email);
-        Posts posts = postsLikesService.findById(postsId);
+    private void addLikes(Customer customer, Posts posts) {
 
         LikeDto likeDto = LikeDto.builder()
                 .customer(customer)

@@ -6,10 +6,10 @@ import java.util.Arrays;
 
 @Getter
 public enum Status {
-    RESERVED("reserved"),
-    ACCEPTED("accepted"),
-    VISITED("visited"),
-    CANCELED("canceled");
+    RESERVED("RESERVED"),
+    ACCEPTED("ACCEPTED"),
+    VISITED("VISITED"),
+    CANCELED("CANCELED");
 
     private String status;
 

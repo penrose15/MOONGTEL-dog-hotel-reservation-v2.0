@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,7 +34,7 @@ public class PostsDto {
     @Pattern(regexp = "(오전|오후) ([0]?[0-9]|1[0-2]):[0-5][0-9]")
     private String checkInEndTime;
 
-    private List<String> tagList;
+    private List<String> tagList = new ArrayList<>();
 
     public Posts toEntity() {
         LocalTime startTime = LocalTime.parse(this.checkInStartTime, DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA));
@@ -51,4 +52,16 @@ public class PostsDto {
                 .build();
     }
 
+    @Builder //for Test
+    public PostsDto(String title, String content, String latitude, String longitude, String address, String phoneNumber, String checkInStartTime, String checkInEndTime, List<String> tagList) {
+        this.title = title;
+        this.content = content;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.checkInStartTime = checkInStartTime;
+        this.checkInEndTime = checkInEndTime;
+        this.tagList = tagList;
+    }
 }

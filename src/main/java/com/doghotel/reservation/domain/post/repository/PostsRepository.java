@@ -1,6 +1,8 @@
 package com.doghotel.reservation.domain.post.repository;
 
 import com.doghotel.reservation.domain.post.entity.Posts;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
