@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 public class RoomDto {
@@ -27,5 +28,19 @@ public class RoomDto {
                 .build();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof RoomDto)) return false;
+        RoomDto roomDto = (RoomDto) o;
+        return Objects.equals(getRoomSize(), roomDto.getRoomSize()) &&
+                Objects.equals(getPrice(), roomDto.getPrice()) &&
+                Objects.equals(getRoomCount(), roomDto.getRoomCount());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRoomSize(), getPrice(), getRoomCount());
+    }
 
 }

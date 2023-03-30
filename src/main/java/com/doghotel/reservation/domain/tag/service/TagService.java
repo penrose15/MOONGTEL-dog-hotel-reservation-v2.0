@@ -21,7 +21,7 @@ public class TagService {
     private final TagRepository tagRepository;
 
     public String createTag(List<String> tags, Posts posts) {
-        if(tags.size() >10) {
+        if(tags.size() >10 || tags.size() < 1) {
             throw new IllegalArgumentException("태그는 10개 이하로만 작성해주세요");
         }
 
@@ -30,16 +30,19 @@ public class TagService {
             Tag tag = Tag.builder()
                     .title(tags.get(i))
                     .build();
-            tag = tagRepository.save(tag);
+
             tagList.add(tag);
         }
+        tagRepository.saveAll(tagList);
+        List<PostsTagMap> postsTagMapList = new ArrayList<>();
         for(int i = 0; i<tagList.size();i++) {
             PostsTagMap postsTagMap = PostsTagMap.builder()
                     .posts(posts)
                     .tag(tagList.get(i))
                     .build();
-            postTagMapRepository.save(postsTagMap);
+            postsTagMapList.add(postsTagMap);
         }
+        postTagMapRepository.saveAll(postsTagMapList);
         return "save tags";
 
     }

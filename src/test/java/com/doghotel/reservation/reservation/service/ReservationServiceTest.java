@@ -3,7 +3,6 @@ package com.doghotel.reservation.reservation.service;
 import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.customer.entity.Customer;
-import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
 import com.doghotel.reservation.domain.customer.service.CustomerVerifyingService;
 import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.domain.post.entity.Posts;
@@ -29,12 +28,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 
