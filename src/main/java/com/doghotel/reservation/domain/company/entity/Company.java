@@ -80,8 +80,9 @@ public class Company extends User {
         this.fileName = fileName;
         this.imgUrl = url;
     }
-
-    public void deletePosts() {
-        this.posts = null;
+    public void addPosts(Posts posts) {
+        this.posts = posts;
     }
+
+
 }

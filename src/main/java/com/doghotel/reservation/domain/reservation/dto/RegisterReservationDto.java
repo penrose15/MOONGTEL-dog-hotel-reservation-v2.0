@@ -11,4 +11,11 @@ public class RegisterReservationDto {
     private String checkInDate;
     private String checkOutDate;
 
+    //for test
+    public RegisterReservationDto(List<RegisterRoomInfoCountDto> registerRoomInfoCountDtos, Long postsId, String checkInDate, String checkOutDate) {
+        this.registerRoomInfoCountDtos = registerRoomInfoCountDtos;
+        this.postsId = postsId;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+    }
 }

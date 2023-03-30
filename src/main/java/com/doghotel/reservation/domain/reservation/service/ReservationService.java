@@ -67,26 +67,10 @@ public class ReservationService {
                     .orElseThrow(() -> new NoSuchElementException());
 
             List<Reservation> reservations = reservationRepository.findByCompanyIdAndRoomId(company.getCompanyId(),roomId);
-            Map<LocalDate, Integer> occupied = new HashMap<>();
 
-            for(LocalDate date = checkIn; date.isBefore(checkOut); date = date.plusDays(1L)) {
-                LocalDate currentDate = date;
-                int roomCount = reservations.stream()
-                        .filter(reservation -> isBetweenCheckInCheckOut(reservation, currentDate))
-                        .filter(reservation -> reservation.getStatus().equals(Status.ACCEPTED))
-                        .mapToInt(Reservation::getDogCount)
-                        .sum();
-                occupied.put(currentDate, roomCount);
-            }
+            Map<LocalDate, Integer> occupied = getReservationInfo(reservations, checkIn, checkOut);
 
-            List<LocalDate> dates = new ArrayList<>(occupied.keySet());
-            int maxCapacity = room.getRoomCount();
-            for (LocalDate date : dates) {
-                int occupiedDogCount = occupied.get(date);
-                if(occupiedDogCount + count >= maxCapacity) {
-                    throw new IllegalArgumentException("수용가능 범위 초과");
-                }
-            }
+            isReservationAvailable(room, occupied, count);
 
             //예약한 총 방의 개수와 가격 계산
             int roomPrice = room.getPrice();
@@ -103,14 +87,36 @@ public class ReservationService {
             totalPrice += roomPerPrice;
         }
 
-        ReservationCreateDto reservationCreateDto =  ReservationCreateDto.builder()
-                .reservationDtos(reservationDtos)
-                .totalCount(totalCount)
-                .totalPrice(totalPrice * days)
-                .build();
+        ReservationCreateDto reservationCreateDto =  ReservationCreateDto.of(reservationDtos, totalCount, totalPrice * days);
         reservationCreateDto.addCustomerEmail(email);
 
         return reservationCreateDto;
+    }
+
+    private Map<LocalDate, Integer> getReservationInfo(List<Reservation> reservations, LocalDate checkIn, LocalDate checkOut) {
+        Map<LocalDate, Integer> occupied = new HashMap<>();
+
+        for(LocalDate date = checkIn; date.isBefore(checkOut); date = date.plusDays(1L)) {
+            LocalDate currentDate = date;
+            int roomCount = reservations.stream()
+                    .filter(reservation -> isBetweenCheckInCheckOut(reservation, currentDate))
+                    .filter(reservation -> reservation.getStatus().equals(Status.ACCEPTED))
+                    .mapToInt(Reservation::getDogCount)
+                    .sum();
+            occupied.put(currentDate, roomCount);
+        }
+        return occupied;
+    }
+
+    private void isReservationAvailable(Room room, Map<LocalDate, Integer> occupied, int count) {
+        List<LocalDate> dates = new ArrayList<>(occupied.keySet());
+        int maxCapacity = room.getRoomCount();
+        for (LocalDate date : dates) {
+            int occupiedDogCount = occupied.get(date);
+            if(occupiedDogCount + count >= maxCapacity) {
+                throw new IllegalArgumentException("수용가능 범위 초과");
+            }
+        }
     }
 
     public ReservationIdDto createReservation(ReservationCreateDto reservationCreateDto, String email, Long postsId) {
@@ -130,23 +136,23 @@ public class ReservationService {
             Room room = roomRepository.findById(roomId)
                             .orElseThrow(() -> new NoSuchElementException());
 
-            reservation.setCustomer(customer);
-            reservation.setCompany(company);
-            reservation.setRoom(room);
+            reservation.designateCustomer(customer);
+            reservation.designateCompany(company);
+            reservation.designateRoom(room);
 
-            Reservation reservation1 = reservationRepository.save(reservation);
+            reservation = reservationRepository.save(reservation);
             List<Long> dogIdList = reservationDto.getDogList();
             List<ReservedDogs> reservedDogsList = new ArrayList<>();
             for(int i = 0; i<dogIdList.size(); i++) {
                 ReservedDogs reservedDogs = ReservedDogs.builder()
                         .dogId(dogIdList.get(i))
-                        .reservation(reservation1)
+                        .reservation(reservation)
                         .build();
                 reservedDogsList.add(reservedDogs);
             }
             dogIdRepository.saveAll(reservedDogsList);
-            reservation1.setReservedDogs(reservedDogsList);
-            reservationIdList.add(reservation1.getReservationId());
+            reservation.addReservedDogs(reservedDogsList);
+            reservationIdList.add(reservation.getReservationId());
         }
 
         return new ReservationIdDto(reservationIdList);

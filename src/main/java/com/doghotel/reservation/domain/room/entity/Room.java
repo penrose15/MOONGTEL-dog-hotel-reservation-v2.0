@@ -44,4 +44,8 @@ public class Room {
     public void addCompany(Company company) {
         this.company = company;
     }
+
+    public void changeRoomCountForTest(int roomCount) {
+        this.roomCount = roomCount;
+    }
 }

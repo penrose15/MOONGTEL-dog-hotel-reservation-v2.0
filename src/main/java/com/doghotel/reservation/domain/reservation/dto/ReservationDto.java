@@ -20,13 +20,16 @@ public class ReservationDto {
     private List<Long> dogList;
 
     @Builder
-    public ReservationDto(String checkInDate, String checkOutDate, int dogCount, Long roomId, int totalPrice) {
+    public ReservationDto(String checkInDate, String checkOutDate, int dogCount, Long roomId, int totalPrice, List<Long> dogList) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.dogCount = dogCount;
         this.roomId = roomId;
         this.totalPrice = totalPrice;
+        this.dogList = dogList;
     }
+
+
 
     public Reservation toEntity() {
         LocalDate checkIn = LocalDate.parse(this.checkInDate, DateTimeFormatter.ISO_LOCAL_DATE);

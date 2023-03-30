@@ -7,6 +7,7 @@ import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import com.doghotel.reservation.domain.reservation.entity.Status;
 import com.doghotel.reservation.domain.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -26,18 +28,17 @@ public class CompanyReservationService {
 
     //예약 상태 변경
     public void changeReservationStatus(Long reservationId, String email, String status) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Reservation reservation = findReservation(reservationId);
         if(!reservation.getCompany().equals(verifyCompany(email))) {
             throw new IllegalArgumentException("다른 회사의 예약은 못건든다.");
         }
         reservation.changeStatus(status);
+        log.info("reservation status changed : " + reservation.getStatus().getStatus());
     }
 
     //삭제..?
     public void changeReservationStatusToCanceled(Long reservationId, String email) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Reservation reservation = findReservation(reservationId);
         if(!reservation.getCompany().equals(verifyCompany(email))) {
             throw new IllegalArgumentException("다른 회사의 예약은 못건든다.");
         }
@@ -64,5 +65,9 @@ public class CompanyReservationService {
     private Company verifyCompany(String email) {
         return companyRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException());
+    }
+    private Reservation findReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new  NoSuchElementException());
     }
 }

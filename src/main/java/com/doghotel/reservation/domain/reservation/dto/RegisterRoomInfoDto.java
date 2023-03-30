@@ -6,4 +6,10 @@ import lombok.Getter;
 public class RegisterRoomInfoDto {
     private Long roomId;
     private String roomSize;
+
+    //for test
+    public RegisterRoomInfoDto(Long roomId, String roomSize) {
+        this.roomId = roomId;
+        this.roomSize = roomSize;
+    }
 }
