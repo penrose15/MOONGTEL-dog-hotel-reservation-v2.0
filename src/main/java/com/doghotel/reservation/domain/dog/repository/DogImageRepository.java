@@ -11,6 +11,6 @@ public interface DogImageRepository extends JpaRepository<DogImage, Long> {
 
     @Query("select d " +
             "from DogImage d " +
-            "where Dog.dogid = :dogId")
+            "where d.dog.dogId = :dogId")
     List<DogImage> findByDogId(Long dogId);
 }

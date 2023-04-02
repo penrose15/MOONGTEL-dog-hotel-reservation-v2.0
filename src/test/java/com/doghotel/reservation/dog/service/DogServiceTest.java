@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -127,19 +128,13 @@ public class DogServiceTest {
         MultipartFile file = new MockMultipartFile(name,
                 originalFilename,
                 "png",
-                fileInputStream);
+                name.getBytes(StandardCharsets.UTF_8));
 
         //when
         doReturn(customer)
                 .when(verifyingService).findByEmail(email);
         doReturn(Optional.ofNullable(dog))
                 .when(dogRepository).findById(dogId);
-        doReturn(originalFilename)
-                .when(awss3Service).originalFileName(file);
-        doReturn(name)
-                .when(awss3Service).filename(originalFilename);
-        doReturn(url)
-                .when(awss3Service).uploadFile(file);
 
         doReturn(dog)
                 .when(dogRepository).save(dog);
