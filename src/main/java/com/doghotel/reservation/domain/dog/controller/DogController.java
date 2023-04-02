@@ -1,6 +1,7 @@
 package com.doghotel.reservation.domain.dog.controller;
 
 import com.doghotel.reservation.domain.dog.dto.*;
+import com.doghotel.reservation.domain.dog.service.DogImageService;
 import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.global.config.security.userdetail.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,14 @@ import java.util.List;
 @RestController
 public class DogController {
     private final DogService dogService;
+    private final DogImageService dogImageService;
 
     @PostMapping("/dog-image")
-    public ResponseEntity<List<DogImageResponseDto>> addDogImage(@RequestPart(name = "file")List<MultipartFile> files,
+    public ResponseEntity<List<DogImageResponseDto>> addDogImages(@RequestPart List<MultipartFile> file,
                                                                 @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         List<DogImageResponseDto> dtos;
         try {
-            dtos = dogService.addDogs(files, userDetails.getEmail());
+            dtos = dogService.addDogs(file, userDetails.getEmail());
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -37,11 +39,11 @@ public class DogController {
     }
 
     @PostMapping
-    public String addDogs(@RequestBody DogPostRequestDto dogPostRequestDto,
+    public ResponseEntity addDogs(@RequestBody DogPostRequestDto dogPostRequestDto,
                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         dogService.addDogs(dogPostRequestDto, customUserDetails.getEmail());
 
-        return "dog saved";
+        return new ResponseEntity("dog saved",HttpStatus.CREATED);
     }
 
     @PatchMapping("/{dog-id}")
@@ -52,10 +54,22 @@ public class DogController {
         return new ResponseEntity<>(dogName, HttpStatus.OK);
     }
 
+    @PostMapping("/dog-image/{dog-id}")
+    public ResponseEntity updateDogImage(@PathVariable(name = "dog-id")Long dogId,
+                                         @RequestPart(name = "files")List<MultipartFile> files,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+        dogImageService.updateFiles(dogId, files);
+
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{dog-id}")
-    public ResponseEntity<DogResponseDto> showDogByDogId(@PathVariable(name = "dog-id") Long dogId,
+    public ResponseEntity<DogDetailProfileDto> showDogByDogId(@PathVariable(name = "dog-id") Long dogId,
                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        DogResponseDto response = dogService.showDogByDogId(dogId, userDetails.getEmail());
+        DogResponseDto dogResponseDto = dogService.showDogByDogId(dogId, userDetails.getEmail());
+        List<DogImageResponseDto> imageResponses = dogImageService.findDogImages(dogId);
+
+        DogDetailProfileDto response = new DogDetailProfileDto(dogResponseDto, imageResponses);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

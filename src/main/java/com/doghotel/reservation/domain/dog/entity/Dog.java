@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,6 +42,9 @@ public class Dog {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<DogImage> dogImageList = new ArrayList<>();
 
     public void designateCustomer(Customer customer) {
         this.customer = customer;

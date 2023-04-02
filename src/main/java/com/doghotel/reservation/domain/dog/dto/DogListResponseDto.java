@@ -23,8 +23,6 @@ public class DogListResponseDto {
         return DogListResponseDto.builder()
                 .dogId(dog.getDogId())
                 .dogName(dog.getDogName())
-                .dogImageName(dog.getDogImageName())
-                .dogImageUrl(dog.getDogImageUrl())
                 .build();
     }
 }

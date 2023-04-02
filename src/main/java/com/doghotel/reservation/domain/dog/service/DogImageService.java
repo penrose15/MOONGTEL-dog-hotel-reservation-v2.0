@@ -114,4 +114,14 @@ public class DogImageService extends updateImgFile<DogImage, DogImageResponseDto
         dogImageRepository.saveAll(insertDogImage);
 
     }
+
+    public List<DogImageResponseDto> findDogImages(Long dogId) {
+        List<DogImage> dogImageList = dogImageRepository.findByDogId(dogId);
+        return dogImageList.stream()
+                .map(dogImage -> DogImageResponseDto.builder()
+                        .originalFilename(dogImage.getOriginalFilename())
+                        .fileName(dogImage.getFileName())
+                        .url(dogImage.getUrl())
+                        .build()).collect(Collectors.toList());
+    }
 }

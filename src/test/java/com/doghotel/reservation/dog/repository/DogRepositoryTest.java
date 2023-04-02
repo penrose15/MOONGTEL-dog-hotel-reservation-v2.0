@@ -39,8 +39,6 @@ public class DogRepositoryTest {
 
         Dog dog1 = Dog.builder()
                 .dogName("dog1")
-                .dogImageName("image1.png")
-                .dogImageUrl("https://s3.com")
                 .type("푸들")
                 .gender("MALE")
                 .age(4)
@@ -50,8 +48,6 @@ public class DogRepositoryTest {
         dog1.designateCustomer(customer);
         Dog dog2 = Dog.builder()
                 .dogName("dog2")
-                .dogImageName("image2.png")
-                .dogImageUrl("https://s3.com")
                 .type("말티즈")
                 .gender("FEMALE")
                 .age(7)

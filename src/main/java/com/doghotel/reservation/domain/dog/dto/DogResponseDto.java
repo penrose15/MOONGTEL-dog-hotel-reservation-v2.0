@@ -8,8 +8,6 @@ import lombok.Getter;
 public class DogResponseDto {
     private Long dogId;
     private String dogName;
-    private String dogImageName;
-    private String dogImageUrl;
     private String type;
     private String gender;
     private Integer age;
@@ -17,11 +15,9 @@ public class DogResponseDto {
     private String etc;
 
     @Builder
-    private DogResponseDto(Long dogId, String dogName, String dogImageName, String dogImageUrl, String type, String gender, Integer age, Double weight, String etc) {
+    private DogResponseDto(Long dogId, String dogName, String type, String gender, Integer age, Double weight, String etc) {
         this.dogId = dogId;
         this.dogName = dogName;
-        this.dogImageName = dogImageName;
-        this.dogImageUrl = dogImageUrl;
         this.type = type;
         this.gender = gender;
         this.age = age;
@@ -32,8 +28,6 @@ public class DogResponseDto {
     public static DogResponseDto of(Dog dog) {
         return DogResponseDto.builder()
                 .dogId(dog.getDogId())
-                .dogImageName(dog.getDogImageName())
-                .dogImageUrl(dog.getDogImageUrl())
                 .dogName(dog.getDogName())
                 .type(dog.getType())
                 .gender(dog.getGender())
