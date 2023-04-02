@@ -77,8 +77,12 @@ public class Company extends User {
     }
 
     public void updateCompanyImg(String fileName, String url) {
-        this.fileName = fileName;
-        this.imgUrl = url;
+        if(fileName != null) {
+            this.fileName = fileName;
+        }
+        if(url != null) {
+            this.imgUrl = url;
+        }
     }
     public void addPosts(Posts posts) {
         this.posts = posts;

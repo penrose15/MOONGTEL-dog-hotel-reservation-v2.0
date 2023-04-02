@@ -23,12 +23,6 @@ public class Dog {
     private String dogName;
 
     @Column
-    private String dogImageName;
-
-    @Column
-    private String dogImageUrl;
-
-    @Column
     private String type;
 
     @Column
@@ -51,12 +45,8 @@ public class Dog {
         this.customer = customer;
     }
 
-    public void addImage(String filename, String url) {
-        this.dogImageName = filename;
-        this.dogImageUrl = url;
-    }
 
-    public void updateDog(DogUpdateDto dto, String filename, String url) {
+    public void updateDog(DogUpdateDto dto) {
         if(dto.getDogName() != null) {
             this.dogName = dto.getDogName();
         }
@@ -69,19 +59,11 @@ public class Dog {
         if(dto.getAge() != null) {
             this.age = dto.getAge();
         }
-        if(filename != null) {
-            this.dogImageName = filename;
-        }
-        if(url != null) {
-            this.dogImageUrl = url;
-        }
     }
 
     @Builder
-    public Dog(String dogName, String dogImageName, String dogImageUrl, String type, String gender, Integer age, Double weight, String etc, Customer customer) {
+    public Dog(String dogName, String type, String gender, Integer age, Double weight, String etc, Customer customer) {
         this.dogName = dogName;
-        this.dogImageName = dogImageName;
-        this.dogImageUrl = dogImageUrl;
         this.type = type;
         this.gender = gender;
         this.age = age;

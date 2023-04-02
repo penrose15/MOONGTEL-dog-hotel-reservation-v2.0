@@ -38,10 +38,13 @@ public class CompanyService {
         return company.getCompanyName();
     }
 
-    public String updateCompany(CompanyUpdateDto dto, String email) {
+    public String updateCompany(CompanyUpdateDto dto, String email, Long companyId) {
 
         Company company = companyRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사"));
+        if(company.getCompanyId() != companyId) {
+            throw new IllegalArgumentException("회사 식별 번호 일치하지 않음");
+        }
 
         company = company.updateCompany(dto);
         company = companyRepository.save(company);

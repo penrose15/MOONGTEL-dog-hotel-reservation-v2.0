@@ -56,7 +56,7 @@ public class LikeRepositoryTest {
                 .build();
         likes = likesRepository.save(likes);
         //when
-        Likes response = likesRepository.findLikesByPostsIdAndCustomerId(1L, 1L)
+        Likes response = likesRepository.findLikesByPostsIdAndCustomerId(posts.getId(), customer.getCustomerId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 like"));
         //then
         assertThat(response.getLikesId())

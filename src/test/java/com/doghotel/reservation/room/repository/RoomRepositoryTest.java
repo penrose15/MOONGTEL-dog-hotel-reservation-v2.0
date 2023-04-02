@@ -52,7 +52,7 @@ public class RoomRepositoryTest {
                 .build();
         room1 = roomRepository.save(room1);
 
-        List<Room> roomList = roomRepository.findByCompanyId(1L);
+        List<Room> roomList = roomRepository.findByCompanyId(company.getCompanyId());
 
         assertThat(roomList.size())
                 .isEqualTo(2);

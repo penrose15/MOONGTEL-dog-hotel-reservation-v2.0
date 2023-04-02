@@ -2,35 +2,28 @@ package com.doghotel.reservation.domain.customer.dto;
 
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.review.dto.ReviewInfoDto;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CustomerProfileViewResponseDto {
     private String username;
+    private String email;
     private String phone;
     private String profile;
-    private String profileUrl;
-    private List<ReviewInfoDto> reviewList;
+    private String profile_url;
 
-    @Builder
-    private CustomerProfileViewResponseDto(String username, String phone, String profile, String profileUrl, List<ReviewInfoDto> reviewList) {
+//    @Builder
+    public CustomerProfileViewResponseDto(String username, String email,String phone, String profile, String profile_url) {
         this.username = username;
+        this.email = email;
         this.phone = phone;
         this.profile = profile;
-        this.profileUrl = profileUrl;
-        this.reviewList = reviewList;
-    }
-
-    public static CustomerProfileViewResponseDto of(Customer customer, List<ReviewInfoDto> reviewList){
-        return CustomerProfileViewResponseDto.builder()
-                .username(customer.getUsername())
-                .phone(customer.getPhone())
-                .profile(customer.getProfile())
-                .profileUrl(customer.getProfileUrl())
-                .reviewList(reviewList)
-                .build();
+        this.profile_url = profile_url;
     }
 }

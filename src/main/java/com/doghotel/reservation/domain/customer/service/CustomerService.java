@@ -41,8 +41,11 @@ public class CustomerService {
         return customer.getUsername();
 
     }
-    public String updateCustomer(String email,  CustomerUpdateRequestDto request) {
+    public String updateCustomer(String email,  CustomerUpdateRequestDto request, Long customerId) {
         Customer customer = findByEmail(email);
+        if(customer.getCustomerId() != customerId) {
+            throw new IllegalArgumentException("customer 식별자 다름");
+        }
 
         customer = customer.updateCustomer(request);
         customer = customerRepository.save(customer);
@@ -62,11 +65,17 @@ public class CustomerService {
     }
 
 
-    public CustomerProfileViewResponseDto getCustomerProfile(String email) {
+    public CustomerProfileViewResponseDto getCustomerProfile(String email, Long customerId) {
         Customer customer = findByEmail(email);
-        List<ReviewInfoDto> reviewInfoDtoList = new ArrayList<>(); // 목업 데이터
+        if(customer.getCustomerId() != customerId) {
+            throw new IllegalArgumentException("회원 식별자 다름");
+        }
 
-        return CustomerProfileViewResponseDto.of(customer, reviewInfoDtoList);
+        return new  CustomerProfileViewResponseDto(customer.getUsername(),
+                customer.getEmail(),
+                customer.getPhone(),
+                customer.getProfile(),
+                customer.getProfileUrl());
     }
 
     public void verifyingEmail(String email) {
@@ -79,7 +88,7 @@ public class CustomerService {
     }
 
 
-    private Customer findByEmail(String email) {
+    public Customer findByEmail(String email) {
         return customerRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException(" 존재하지 않는 유저"));
     }

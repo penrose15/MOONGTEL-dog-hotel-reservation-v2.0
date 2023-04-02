@@ -65,7 +65,7 @@ public class DogRepositoryTest {
 
         List<Dog> dogs = List.of(dog1, dog2);
 
-        List<Dog> response = dogRepository.findByCustomerCustomerId(1L);
+        List<Dog> response = dogRepository.findByCustomerCustomerId(customer.getCustomerId());
 
         assertThat(response).isEqualTo(dogs);
 

@@ -1,12 +1,10 @@
 package com.doghotel.reservation.domain.dog.controller;
 
-import com.doghotel.reservation.domain.dog.dto.DogListResponseDto;
-import com.doghotel.reservation.domain.dog.dto.DogPostDto;
-import com.doghotel.reservation.domain.dog.dto.DogResponseDto;
-import com.doghotel.reservation.domain.dog.dto.DogUpdateDto;
+import com.doghotel.reservation.domain.dog.dto.*;
 import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.global.config.security.userdetail.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,26 +15,40 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/dog")
 @RestController
 public class DogController {
     private final DogService dogService;
 
+    @PostMapping("/dog-image")
+    public ResponseEntity<List<DogImageResponseDto>> addDogImage(@RequestPart(name = "file")List<MultipartFile> files,
+                                                                @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        List<DogImageResponseDto> dtos;
+        try {
+            dtos = dogService.addDogs(files, userDetails.getEmail());
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.CREATED);
+    }
+
     @PostMapping
-    public ResponseEntity<String> addDog(@RequestPart(name = "dto") @Valid DogPostDto dto,
-                                 @RequestPart(name = "file")MultipartFile file,
-                                 @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
-        String dogName = dogService.addDogs(dto, file, userDetails.getEmail());
-        return new ResponseEntity<>(dogName, HttpStatus.CREATED);
+    public String addDogs(@RequestBody DogPostRequestDto dogPostRequestDto,
+                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        dogService.addDogs(dogPostRequestDto, customUserDetails.getEmail());
+
+        return "dog saved";
     }
 
     @PatchMapping("/{dog-id}")
     public ResponseEntity<String> updateDog(@PathVariable(name = "dog-id")Long dogId,
-                                            @RequestPart(name = "dto")DogUpdateDto dto,
-                                            @RequestPart(name = "file") MultipartFile file,
+                                            @RequestBody DogUpdateDto dto,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
-        String dogName = dogService.updateDog(dogId, dto, file, userDetails.getEmail());
+        String dogName = dogService.updateDog(dogId, dto, userDetails.getEmail());
         return new ResponseEntity<>(dogName, HttpStatus.OK);
     }
 

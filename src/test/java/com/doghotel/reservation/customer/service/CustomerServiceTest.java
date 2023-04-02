@@ -1,4 +1,4 @@
-package com.doghotel.reservation.customer;
+package com.doghotel.reservation.customer.service;
 
 import com.doghotel.reservation.domain.company.repository.CompanyRepository;
 import com.doghotel.reservation.domain.customer.dto.CustomerProfileViewResponseDto;
@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,7 +78,7 @@ public class CustomerServiceTest {
         doReturn(customer)
                 .when(customerRepository).save(customer);
 
-        String customerName = customerService.updateCustomer(email, dto);
+        String customerName = customerService.updateCustomer(email, dto, anyLong());
         assertEquals(customerName, "update username");
     }
 
@@ -134,7 +133,7 @@ public class CustomerServiceTest {
         doReturn(Optional.of(customer))
                 .when(customerRepository).findByEmail(email);
 
-        CustomerProfileViewResponseDto response = customerService.getCustomerProfile(email);
+        CustomerProfileViewResponseDto response = customerService.getCustomerProfile(email, anyLong());
 
         assertEquals(response.getUsername(), "customer");
     }

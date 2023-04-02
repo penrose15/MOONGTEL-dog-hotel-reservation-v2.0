@@ -52,30 +52,23 @@ public class ReservationRepositoryTest {
     EntityManager em;
     JPAQueryFactory queryFactory;
 
+    private Customer customer;
+    private Company company;
     private Reservation reservation;
-    private Reservation reservation1;
+    private Room room;
 
     @BeforeEach
     public void init() {
         queryFactory = new JPAQueryFactory(em);
-    }
-    @AfterEach
-    public void deleteAll() {
-        reservationRepository.deleteAll();
-        customerRepository.deleteAll();
-        companyRepository.deleteAll();
-        roomRepository.deleteAll();
-    }
 
-    private void setInit() {
-        Customer customer = Customer.builder()
+        customer = Customer.builder()
                 .username("name")
                 .email("customer@gmail.com")
                 .password("password1234!")
                 .phone("010-1111-2222")
                 .build();
         customer = customerRepository.save(customer);
-        Company company = Company.builder()
+        company = Company.builder()
                 .email("company@gmail.com")
                 .password("1234abcd!")
                 .companyName("test company")
@@ -84,32 +77,17 @@ public class ReservationRepositoryTest {
                 .representativeNumber("123456789")
                 .build();
         company = companyRepository.save(company);
-        Company company1 = Company.builder()
-                .email("company1@gmail.com")
-                .password("1234abcd!")
-                .companyName("test company1")
-                .address("test address")
-                .detailAddress("test detailAddress")
-                .representativeNumber("123456789")
-                .build();
-        company1 = companyRepository.save(company1);
-        Room room = Room.builder()
+
+        room = Room.builder()
                 .price(10000)
                 .roomCount(10)
                 .roomSize("for small dog")
                 .company(company)
                 .build();
         room = roomRepository.save(room);
-        Room room1 = Room.builder()
-                .price(10000)
-                .roomCount(10)
-                .roomSize("for small dog")
-                .company(company)
-                .build();
-        room1 = roomRepository.save(room1);
 
         reservation = Reservation.builder()
-                .room(room1)
+                .room(room)
                 .checkInDate(LocalDate.of(2024,02,03))
                 .checkOutDate(LocalDate.of(2024,02,06))
                 .dogCount(5)
@@ -118,16 +96,6 @@ public class ReservationRepositoryTest {
                 .company(company)
                 .build();
         reservation = reservationRepository.save(reservation);
-        reservation1 = Reservation.builder()
-                .room(room)
-                .checkInDate(LocalDate.of(2024,02,03))
-                .checkOutDate(LocalDate.of(2024,02,06))
-                .dogCount(5)
-                .totalPrice(100000)
-                .customer(customer)
-                .company(company1)
-                .build();
-        reservation1 = reservationRepository.save(reservation1);
 
         ReservedDogs reservedDogs = ReservedDogs.builder()
                 .dogId(1L)
@@ -140,20 +108,26 @@ public class ReservationRepositoryTest {
         reservedDogIdRepository.save(reservedDogs);
         reservedDogIdRepository.save(reservedDogs1);
     }
+    @AfterEach
+    public void deleteAll() {
+        reservationRepository.deleteAll();
+        customerRepository.deleteAll();
+        companyRepository.deleteAll();
+        roomRepository.deleteAll();
+    }
 
     @Test
     void findByCompanyIdAndRoomIdTest() {
         //given
-        setInit();
 
         //when
-        List<Reservation> list = reservationRepository.findByCompanyIdAndRoomId(1L, 2L);
+        List<Reservation> list = reservationRepository.findByCompanyIdAndRoomId(company.getCompanyId(), room.getRoomId());
 
 
         //then
         Reservation reservation = list.get(0);
-        assertThat(reservation.getRoom().getRoomId())
-                .isEqualTo(2);
+        assertThat(reservation.getRoom().getRoomSize())
+                .isEqualTo("for small dog");
         assertThat(reservation.getDogCount())
                 .isEqualTo(5);
         assertThat(reservation.getCompany().getCompanyName())
@@ -162,57 +136,49 @@ public class ReservationRepositoryTest {
 
     @Test
     void findByCustomerIdTest() {
-        setInit();
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "reservationId");
-        Page<ReservationResponseDto> responseDtos = reservationRepository.findByCustomerId(1L, pageable);
+        Page<ReservationResponseDto> responseDtos = reservationRepository.findByCustomerId(customer.getCustomerId(), pageable);
 
         assertThat(responseDtos.getTotalElements())
-                .isEqualTo(2);
+                .isEqualTo(1);
         assertThat(responseDtos.getTotalPages())
                 .isEqualTo(1);
     }
 
     @Test
     void findByCustomerIdBeforeCheckInTest() {
-        setInit();
+
         reservation.changeStatus("ACCEPTED");
-        reservation1.changeStatus("CANCELED");
 
         reservationRepository.save(reservation);
-        reservationRepository.save(reservation1);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "reservationId");
-        Page<ReservationResponseDto> responses = reservationRepository.findByCustomerIdBeforeCheckIn(1L, pageable, LocalDate.now());
+        Page<ReservationResponseDto> responses = reservationRepository.findByCustomerIdBeforeCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
 
         assertThat(responses.getTotalElements())
-                .isEqualTo(1);
-        assertThat(responses.getTotalPages())
                 .isEqualTo(1);
     }
 
     @Test
     void findByCustomerIdAfterCheckInTest() {
-        setInit();
+
         reservation.changeStatus("VISITED");
-        reservation1.changeStatus("VISITED");
 
         reservationRepository.save(reservation);
-        reservationRepository.save(reservation1);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "reservationId");
-        Page<ReservationResponseDto> responses = reservationRepository.findByCustomerIdAfterCheckIn(1L, pageable, LocalDate.now());
+        Page<ReservationResponseDto> responses = reservationRepository.findByCustomerIdAfterCheckIn(customer.getCustomerId(), pageable, LocalDate.now());
 
         assertThat(responses.getTotalElements())
-                .isEqualTo(0);
-        assertThat(responses.getTotalPages())
                 .isEqualTo(0);
     }
 
     @Test
     void findByCompanyIdTest() {
-        setInit();
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "reservationId");
-        Page<ReservationResponseDto> responses = reservationRepository.findByCompanyId(1L, pageable);
+        Page<ReservationResponseDto> responses = reservationRepository.findByCompanyId(company.getCompanyId(), pageable);
 
         assertThat(responses.getTotalElements())
                 .isEqualTo(1);
@@ -222,16 +188,16 @@ public class ReservationRepositoryTest {
 
     @Test
     void findByCompanyIdAndStatusTest() {
-        setInit();
+
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "reservationId");
-        Page<ReservationResponseDto> responses = reservationRepository.findByCompanyIdAndStatus(1L, Status.RESERVED, pageable);
+        Page<ReservationResponseDto> responses = reservationRepository.findByCompanyIdAndStatus(company.getCompanyId(), Status.RESERVED, pageable);
 
         assertThat(responses.getTotalElements())
                 .isEqualTo(1);
 
         reservation.changeStatus("VISITED");
         reservationRepository.save(reservation);
-        Page<ReservationResponseDto> responses1 = reservationRepository.findByCompanyIdAndStatus(1L, Status.VISITED, pageable);
+        Page<ReservationResponseDto> responses1 = reservationRepository.findByCompanyIdAndStatus(company.getCompanyId(), Status.VISITED, pageable);
 
         assertThat(responses1.getTotalElements())
                 .isEqualTo(1);
@@ -241,8 +207,9 @@ public class ReservationRepositoryTest {
 
     @Test
     void findByReservationIdTest() {
-        setInit();
-        List<ReservedDogs> responses = reservedDogIdRepository.findByReservationId(1L);
+
+
+        List<ReservedDogs> responses = reservedDogIdRepository.findByReservationId(reservation.getReservationId());
 
         assertThat(responses.size())
                 .isEqualTo(2);

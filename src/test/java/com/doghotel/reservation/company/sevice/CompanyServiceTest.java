@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -97,7 +96,7 @@ public class CompanyServiceTest {
 
         doReturn(company)
                 .when(companyRepository).save(company);
-        String companyName = companyService.updateCompany(request, email);
+        String companyName = companyService.updateCompany(request, email, anyLong());
     }
 
     @Test
