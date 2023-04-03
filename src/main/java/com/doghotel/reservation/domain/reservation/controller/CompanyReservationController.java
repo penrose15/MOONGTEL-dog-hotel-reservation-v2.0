@@ -22,13 +22,13 @@ public class CompanyReservationController {
 
     //예약 현황 조회
     @GetMapping("/list")
-    public ResponseEntity showReservation(@RequestParam int page,
+    public ResponseEntity showReservations(@RequestParam int page,
                                           @RequestParam int size,
                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
         Page<ReservationResponseDto> reservationPage = companyReservationService.showReservations(userDetails.getEmail(), page-1, size);
         List<ReservationResponseDto> responseDtoList = reservationPage.getContent();
 
-        return new ResponseEntity(new MultiResponseDto<>(responseDtoList, reservationPage), HttpStatus.ACCEPTED);
+        return new ResponseEntity(new MultiResponseDto<>(responseDtoList, reservationPage), HttpStatus.OK);
     }
 
     //예약 상태 별 조회
