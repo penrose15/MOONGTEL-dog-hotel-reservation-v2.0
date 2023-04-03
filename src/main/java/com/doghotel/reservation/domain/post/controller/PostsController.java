@@ -22,8 +22,8 @@ public class PostsController {
     private final PostsService postsService;
 
     @PostMapping
-    public ResponseEntity<String> createPosts(@RequestPart(value = "dto")PostsDto dto,
-                                              @RequestPart(value = "files")List<MultipartFile> files,
+    public ResponseEntity<String> createPosts(@RequestPart PostsDto dto,
+                                              @RequestPart List<MultipartFile> files,
                                               @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         String email = userDetails.getUsername();
         String title = postsService.createPosts(email, dto, files);
@@ -31,7 +31,7 @@ public class PostsController {
         return new ResponseEntity<>(title, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{post-id}")
+    @PostMapping("/{post-id}")
     public String updatePosts(@PathVariable(name = "post-id") Long postsId,
                                       @RequestPart(name = "dto") PostsUpdateDto dto,
                                       @RequestPart(name = "file") List<MultipartFile> file,
