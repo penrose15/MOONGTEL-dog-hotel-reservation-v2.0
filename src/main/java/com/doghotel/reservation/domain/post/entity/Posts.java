@@ -26,9 +26,7 @@ public class Posts {
 
     @PrePersist
     void prePersist() {
-        if(this.score == null) {
-            this.score = 0.0;
-        }
+
         if(this.likeCount == null) {
             this.likeCount = 0;
         }
@@ -53,7 +51,6 @@ public class Posts {
     @Column(nullable = false)
     private String address;
 
-    private Double score;
 
     private Integer likeCount;
 
@@ -79,8 +76,11 @@ public class Posts {
     @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsTagMap> postsTagMapList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    private PostsScore postsScore;
+
     @Builder
-    public Posts(String title, String content, String latitude, String longitude, String address, String phoneNumber, LocalTime checkInStartTime, LocalTime checkInEndTime, Company company, Double score, List<PostsImg> postsImgs) {
+    public Posts(String title, String content, String latitude, String longitude, String address, String phoneNumber, LocalTime checkInStartTime, LocalTime checkInEndTime, Company company, List<PostsImg> postsImgs) {
         this.title = title;
         this.content = content;
         this.latitude = latitude;
@@ -90,7 +90,6 @@ public class Posts {
         this.checkInStartTime = checkInStartTime;
         this.checkInEndTime = checkInEndTime;
         this.company = company;
-        this.score = score;
         this.postsImgs = postsImgs;
     }
 
@@ -143,4 +142,5 @@ public class Posts {
     public void minusLikeCount() {
         this.likeCount -=1;
     }
+
 }

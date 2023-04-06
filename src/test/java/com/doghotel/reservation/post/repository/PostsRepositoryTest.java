@@ -132,7 +132,7 @@ public class PostsRepositoryTest {
     void getMainPages() {
         //given
         setInit();
-        PostsResponsesDto response = new PostsResponsesDto(1L,1L,"image", "https://abc.com", "title posts1", 0.0, 10000);
+        PostsResponsesDto response = new PostsResponsesDto(1L,1L,"image", "https://abc.com", "title posts1", 10000);
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         List<PostsResponsesDto> list = List.of(response);
 
@@ -150,7 +150,7 @@ public class PostsRepositoryTest {
     @Test
     void searchPagesByTitleOrContentOrAddressTest() {
         setInit();
-        PostsResponsesDto response = new PostsResponsesDto(1L,1L,"image", "https://abc.com", "title", 0.0, 10000);
+        PostsResponsesDto response = new PostsResponsesDto(1L,1L,"image", "https://abc.com", "title",  10000);
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         List<PostsResponsesDto> list = List.of(response);
 

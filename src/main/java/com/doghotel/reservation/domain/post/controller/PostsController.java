@@ -21,7 +21,7 @@ import java.util.List;
 public class PostsController {
     private final PostsService postsService;
 
-    @PostMapping
+    @PostMapping("/company")
     public ResponseEntity<String> createPosts(@RequestPart PostsDto dto,
                                               @RequestPart List<MultipartFile> files,
                                               @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
@@ -31,7 +31,7 @@ public class PostsController {
         return new ResponseEntity<>(title, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{post-id}")
+    @PostMapping("/company/{post-id}")
     public String updatePosts(@PathVariable(name = "post-id") Long postsId,
                                       @RequestPart(name = "dto") PostsUpdateDto dto,
                                       @RequestPart(name = "file") List<MultipartFile> file,
@@ -68,7 +68,7 @@ public class PostsController {
         return new ResponseEntity(postsResponsesDtoList, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/company/{id}")
     public ResponseEntity delete(@PathVariable("id") Long postsId,
                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
         String email = userDetails.getUsername();

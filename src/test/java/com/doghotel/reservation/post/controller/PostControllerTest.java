@@ -172,10 +172,10 @@ public class PostControllerTest {
     @WithAuthCompany
     void showPostsTest() throws Exception {
         PostsResponsesDto postsResponsesDto1 = new PostsResponsesDto(
-               1L, 1L, "image","https://image.com","title", 0.5,50000
+               1L, 1L, "image","https://image.com","title", 50000
         );
         PostsResponsesDto postsResponsesDto2 = new PostsResponsesDto(
-                2L, 2L, "image","https://image.com","title", 0.5,50000
+                2L, 2L, "image","https://image.com","title", 50000
         );
         List<PostsResponsesDto> postsResponsesDtos = List.of(postsResponsesDto1,postsResponsesDto2);
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC,"id");
@@ -206,7 +206,6 @@ public class PostControllerTest {
                                         fieldWithPath("[].name").type(JsonFieldType.STRING).description("postImage filename"),
                                         fieldWithPath("[].url").type(JsonFieldType.STRING).description("postImage url"),
                                         fieldWithPath("[].title").type(JsonFieldType.STRING).description("post 제목"),
-                                        fieldWithPath("[].score").type(JsonFieldType.NUMBER).description("post 평점"),
                                         fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("post 최소 가격")
                                 )
                         )
@@ -219,10 +218,10 @@ public class PostControllerTest {
     @WithAuthCompany
     void searchPostTest() throws Exception {
         PostsResponsesDto postsResponsesDto1 = new PostsResponsesDto(
-                1L, 1L, "image","https://image.com","the hotel", 0.5,50000
+                1L, 1L, "image","https://image.com","the hotel", 50000
         );
         PostsResponsesDto postsResponsesDto2 = new PostsResponsesDto(
-                2L, 2L, "image","https://image.com","any hotel", 0.5,50000
+                2L, 2L, "image","https://image.com","any hotel", 50000
         );
         List<PostsResponsesDto> postsResponsesDtos = List.of(postsResponsesDto1,postsResponsesDto2);
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC,"id");
@@ -256,7 +255,6 @@ public class PostControllerTest {
                                         fieldWithPath("[].name").type(JsonFieldType.STRING).description("postImage filename"),
                                         fieldWithPath("[].url").type(JsonFieldType.STRING).description("postImage url"),
                                         fieldWithPath("[].title").type(JsonFieldType.STRING).description("post 제목"),
-                                        fieldWithPath("[].score").type(JsonFieldType.NUMBER).description("post 평점"),
                                         fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("post 최소 가격")
                                 )
                         )
@@ -265,7 +263,9 @@ public class PostControllerTest {
 
     @Test
     void showPostTest() throws Exception {
-        PostsResponseDto response = new PostsResponseDto(1L,
+        PostsResponseDto response = new PostsResponseDto(
+                1L,
+                1L,
                 "title",
                 "content",
                 "123456789",
@@ -275,7 +275,6 @@ public class PostControllerTest {
                 "오전 11:00",
                 "오후 11:00",
                 List.of("tag1","tag2"),
-                4.7,
                 List.of(PostsImgDto.builder()
                                 .postsImgId(1L)
                                 .filename("image.png")
@@ -305,6 +304,7 @@ public class PostControllerTest {
                         responseFields(
                                 List.of(
                                         fieldWithPath("postsId").type(JsonFieldType.NUMBER).description("posts 식별자"),
+                                        fieldWithPath("companyId").type(JsonFieldType.NUMBER).description("company 식별자"),
                                         fieldWithPath("title").type(JsonFieldType.STRING).description("post title"),
                                         fieldWithPath("content").type(JsonFieldType.STRING).description("post content"),
                                         fieldWithPath("latitude").type(JsonFieldType.STRING).description("latitude"),
@@ -314,7 +314,6 @@ public class PostControllerTest {
                                         fieldWithPath("checkInStartTime").type(JsonFieldType.STRING).description("체크인 시작 시간"),
                                         fieldWithPath("checkInEndTime").type(JsonFieldType.STRING).description("체크인 마감 시간"),
                                         fieldWithPath("tags").type(JsonFieldType.ARRAY).description("태그"),
-                                        fieldWithPath("score").type(JsonFieldType.NUMBER).description("평점"),
                                         fieldWithPath("postsImgDtos").type(JsonFieldType.ARRAY).description("호텔 이미지들"),
                                         fieldWithPath("postsImgDtos[].postsImgId").type(JsonFieldType.NUMBER).description("이미지 식별자"),
                                         fieldWithPath("postsImgDtos[].filename").type(JsonFieldType.STRING).description("이미지 파일 이름"),

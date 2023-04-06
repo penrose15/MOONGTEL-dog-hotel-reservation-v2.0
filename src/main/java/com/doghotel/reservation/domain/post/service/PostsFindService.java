@@ -19,4 +19,9 @@ public class PostsFindService {
         return postsRepository.findById(postsId)
                 .orElseThrow(() -> new NoSuchElementException("존재핞는 홍보글"));
     }
+
+    public Posts findByCompanyId(Long companyId) {
+        return postsRepository.findPostsByCompanyId(companyId)
+                .orElseThrow(() -> new NoSuchElementException());
+    }
 }

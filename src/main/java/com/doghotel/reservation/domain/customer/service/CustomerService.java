@@ -7,7 +7,6 @@ import com.doghotel.reservation.domain.customer.dto.CustomerSignUpDto;
 import com.doghotel.reservation.domain.customer.dto.CustomerUpdateRequestDto;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
-import com.doghotel.reservation.domain.review.dto.ReviewInfoDto;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 

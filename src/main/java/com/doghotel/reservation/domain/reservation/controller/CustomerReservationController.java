@@ -39,10 +39,10 @@ public class CustomerReservationController {
         return new ResponseEntity(reservationIdDto,HttpStatus.CREATED);
     }
 
-    @PostMapping("/reservation-complete") //예약 확인 페이지
-    public ResponseEntity finalReservation(@RequestBody ReservationIdDto dto,
+    @GetMapping("/reservation-complete") //예약 확인 페이지
+    public ResponseEntity finalReservation(@RequestParam List<Long> reservationIds,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<ReservationCompleteDto> reservationCompleteDtos = reservationService.reservationComplete(dto, userDetails.getEmail());
+        List<ReservationCompleteDto> reservationCompleteDtos = reservationService.reservationComplete(reservationIds, userDetails.getEmail());
 
         return new ResponseEntity(reservationCompleteDtos, HttpStatus.OK);
     }

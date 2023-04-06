@@ -1,5 +1,6 @@
 package com.doghotel.reservation.domain.review.entity;
 
+import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.post.entity.Posts;
 import lombok.AccessLevel;
@@ -34,15 +35,15 @@ public class Review {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "posts_id")
-    private Posts posts;
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     @Builder
-    public Review(String title, String content, Double score, Customer customer, Posts posts) {
+    public Review(String title, String content, Double score, Customer customer,Company  company) {
         this.title = title;
         this.content = content;
         this.score = score;
         this.customer = customer;
-        this.posts = posts;
+        this.company = company;
     }
 }

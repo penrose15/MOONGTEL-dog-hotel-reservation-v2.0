@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class PostsResponseDto {
     private Long postsId;
+    private Long companyId;
     private String title;
     private String content;
     private String latitude;
@@ -20,13 +21,13 @@ public class PostsResponseDto {
     private String checkInStartTime;
     private String checkInEndTime;
     private List<String> tags;
-    private Double score;
     private List<PostsImgDto> postsImgDtos;
     private List<RoomResponseDto> roomResponseDtos;
 
     @Builder
-    public PostsResponseDto(Long postsId, String title,String content, String latitude, String longitude, String address, String phoneNumber, String checkInStartTime, String checkInEndTime, List<String> tags, Double score, List<PostsImgDto> postsImgDtos, List<RoomResponseDto> roomResponseDtos) {
+    public PostsResponseDto(Long postsId, Long companyId, String title, String content, String latitude, String longitude, String address, String phoneNumber, String checkInStartTime, String checkInEndTime, List<String> tags,  List<PostsImgDto> postsImgDtos, List<RoomResponseDto> roomResponseDtos) {
         this.postsId = postsId;
+        this.companyId = companyId;
         this.title = title;
         this.content = content;
         this.latitude = latitude;
@@ -36,14 +37,16 @@ public class PostsResponseDto {
         this.checkInStartTime = checkInStartTime;
         this.checkInEndTime = checkInEndTime;
         this.tags = tags;
-        this.score = score;
         this.postsImgDtos = postsImgDtos;
         this.roomResponseDtos = roomResponseDtos;
     }
 
+
+
     public static PostsResponseDto of(Posts posts, List<PostsImgDto> postsImgDtos,List<String> tags, List<RoomResponseDto> roomDtos) {
         return PostsResponseDto.builder()
                 .postsId(posts.getId())
+                .companyId(posts.getCompany().getCompanyId())
                 .title(posts.getTitle())
                 .content(posts.getContent())
                 .latitude(posts.getLatitude())
@@ -53,7 +56,6 @@ public class PostsResponseDto {
                 .checkInStartTime(posts.getCheckInStartTime().format(DateTimeFormatter.ofPattern("a hh:mm")))
                 .checkInEndTime(posts.getCheckInEndTime().format(DateTimeFormatter.ofPattern("a hh:mm")))
                 .tags(tags)
-                .score(posts.getScore())
                 .postsImgDtos(postsImgDtos)
                 .roomResponseDtos(roomDtos)
                 .build();

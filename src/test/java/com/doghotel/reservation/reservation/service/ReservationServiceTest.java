@@ -100,7 +100,6 @@ public class ReservationServiceTest {
                 .build();
 
         Posts posts = Posts.builder()
-                .score(0.0)
                 .title("title")
                 .content("content")
                 .longitude("1111111")
@@ -258,7 +257,7 @@ public class ReservationServiceTest {
         List<Long> reservedIdList = List.of(1L);
         ReservationIdDto reservationIdDto = new ReservationIdDto(reservedIdList);
 
-        List<ReservationCompleteDto> reservationCompleteDtos = reservationService.reservationComplete(reservationIdDto, email);
+        List<ReservationCompleteDto> reservationCompleteDtos = reservationService.reservationComplete(reservedIdList, email);
         assertThat(reservationCompleteDtos.size())
                 .isEqualTo(1);
     }

@@ -30,7 +30,7 @@ public class PostsRepositoryImpl implements PostsRepositoryCustom{
     @Override
     public Page<PostsResponsesDto> getMainPages(Pageable pageable) {
         List<PostsResponsesDto> mainPages = queryFactory
-                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, posts.score, room.price))
+                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, room.price))
                 .from(posts)
                 .join(postsImg)
                 .on(posts.id.eq(postsImg.posts.id))
@@ -53,7 +53,7 @@ public class PostsRepositoryImpl implements PostsRepositoryCustom{
                 .fetch();
 
         JPQLQuery<PostsResponsesDto> count = queryFactory
-                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, posts.score, room.price))
+                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title,  room.price))
                 .from(posts)
                 .join(postsImg)
                 .on(posts.id.eq(postsImg.posts.id))
@@ -78,7 +78,7 @@ public class PostsRepositoryImpl implements PostsRepositoryCustom{
     @Override
     public Page<PostsResponsesDto> searchPagesByTitleOrContentOrAddress(String keyword, Pageable pageable) {
         List<PostsResponsesDto> mainPages = queryFactory
-                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, posts.score, room.price))
+                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title,  room.price))
                 .from(posts)
                 .join(postsImg)
                 .on(posts.id.eq(postsImg.posts.id))
@@ -102,7 +102,7 @@ public class PostsRepositoryImpl implements PostsRepositoryCustom{
                 .fetch();
 
         JPQLQuery<PostsResponsesDto> count = queryFactory
-                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, posts.score, room.price))
+                .select(Projections.constructor(PostsResponsesDto.class,posts.id,postsImg.postsImgId, postsImg.name, postsImg.url, posts.title, room.price))
                 .from(posts)
                 .join(postsImg)
                 .on(posts.id.eq(postsImg.posts.id))

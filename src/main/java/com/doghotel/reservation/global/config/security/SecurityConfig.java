@@ -58,7 +58,9 @@ public class SecurityConfig{
                 .access("hasRole('ROLE_COMPANY') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/v1/customer/**")
                 .access("hasRole('ROLE_CUSTOMER') or hasRole('ROLE_ADMIN')")
-                .antMatchers("/v1/posts/**")
+                .antMatchers("/v1/post/company/**")
+                .access("hasRole('ROLE_COMPANY') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/v1/post/**")
                 .permitAll()
                 .anyRequest().authenticated();
 

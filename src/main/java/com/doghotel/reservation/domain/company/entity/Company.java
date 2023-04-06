@@ -43,7 +43,7 @@ public class Company extends User {
     @Column
     private String imgUrl;
 
-    @OneToOne(mappedBy = "company")
+    @OneToOne(mappedBy = "company", fetch = FetchType.LAZY)
     private Posts posts;
 
     @Enumerated(value = EnumType.STRING)

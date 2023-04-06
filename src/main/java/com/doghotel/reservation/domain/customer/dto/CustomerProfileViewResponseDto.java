@@ -1,13 +1,8 @@
 package com.doghotel.reservation.domain.customer.dto;
 
-import com.doghotel.reservation.domain.customer.entity.Customer;
-import com.doghotel.reservation.domain.review.dto.ReviewInfoDto;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

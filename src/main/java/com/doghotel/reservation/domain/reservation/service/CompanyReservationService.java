@@ -42,7 +42,7 @@ public class CompanyReservationService {
         if(!reservation.getCompany().equals(verifyCompany(email))) {
             throw new IllegalArgumentException("다른 회사의 예약은 못건든다.");
         }
-        reservation.changeStatus("canceled");
+        reservation.changeStatus("CANCELED");
     }
 
     //회사에 예약된 내역들 전체 조회

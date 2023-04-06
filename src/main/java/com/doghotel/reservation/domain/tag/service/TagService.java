@@ -89,10 +89,7 @@ public class TagService {
     }
 
     public List<String> findTagsByPostsId(Long postsId) {
-        List<PostsTagMap> postsTagMaps = postTagMapRepository.findByPostsPostsId(postsId);
-
-        return postsTagMaps.stream()
-                .map(postsTagMap -> postsTagMap.getTag().getTitle()).collect(Collectors.toList());
+        return tagRepository.findTagsByPostsId(postsId);
     }
 
 

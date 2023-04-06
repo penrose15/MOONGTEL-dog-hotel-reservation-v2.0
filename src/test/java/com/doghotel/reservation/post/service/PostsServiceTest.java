@@ -7,8 +7,10 @@ import com.doghotel.reservation.domain.company.service.CompanyVerifyService;
 import com.doghotel.reservation.domain.post.dto.*;
 import com.doghotel.reservation.domain.post.entity.Posts;
 import com.doghotel.reservation.domain.post.entity.PostsImg;
+import com.doghotel.reservation.domain.post.entity.PostsScore;
 import com.doghotel.reservation.domain.post.repository.PostsRepository;
 import com.doghotel.reservation.domain.post.repository.PostsRepositoryImpl;
+import com.doghotel.reservation.domain.post.repository.PostsScoreRepository;
 import com.doghotel.reservation.domain.post.service.PostsImgService;
 import com.doghotel.reservation.domain.post.service.PostsService;
 import com.doghotel.reservation.domain.room.dto.RoomResponseDto;
@@ -51,6 +53,8 @@ public class PostsServiceTest {
     private RoomService roomService;
     @Mock
     private TagService tagService;
+    @Mock
+    private PostsScoreRepository postsScoreRepository;
 
     @InjectMocks
     private PostsService postsService;
@@ -145,6 +149,8 @@ public class PostsServiceTest {
                 .when(postsImgService).savePostsImg(multipartFiles, posts);
         doReturn("save tags")
                 .when(tagService).createTag(postsDto.getTagList(), posts);
+        doReturn(new PostsScore(posts))
+                .when(postsScoreRepository).save(any(PostsScore.class));
 
         //then
         String title = postsService.createPosts(email, postsDto, multipartFiles);
@@ -215,7 +221,6 @@ public class PostsServiceTest {
                 .checkInStartTime(LocalTime.of(11,0))
                 .checkInEndTime(LocalTime.of(23, 0))
                 .company(company)
-                .score(0.0)
                 .postsImgs(postsImgs)
                 .build();
 
@@ -237,8 +242,6 @@ public class PostsServiceTest {
                 .isEqualTo("title");
         assertThat(response.getContent())
                 .isEqualTo("content");
-        assertThat(response.getScore())
-                .isEqualTo(0);
 
     }
 
@@ -247,7 +250,7 @@ public class PostsServiceTest {
         //given
         Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
         PostsResponsesDto postsResponsesDto
-                = new PostsResponsesDto(1L, 1L, "filename", "https://url.com", "title", 0.0, 100000);
+                = new PostsResponsesDto(1L, 1L, "filename", "https://url.com", "title",  100000);
         List<PostsResponsesDto> postsResponsesDtoList = List.of(postsResponsesDto);
         Page<PostsResponsesDto> postsResponsesDtos = new PageImpl<>(postsResponsesDtoList, pageable, 1L);
 

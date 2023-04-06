@@ -18,4 +18,9 @@ public class CompanyVerifyService {
         return companyRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회사"));
     }
+
+    public Company findById(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new NoSuchElementException());
+    }
 }

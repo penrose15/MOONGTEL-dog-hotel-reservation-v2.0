@@ -6,8 +6,10 @@ import com.doghotel.reservation.domain.company.service.CompanyVerifyService;
 import com.doghotel.reservation.domain.post.dto.*;
 import com.doghotel.reservation.domain.post.entity.Posts;
 import com.doghotel.reservation.domain.post.entity.PostsImg;
+import com.doghotel.reservation.domain.post.entity.PostsScore;
 import com.doghotel.reservation.domain.post.repository.PostsRepository;
 import com.doghotel.reservation.domain.post.repository.PostsRepositoryImpl;
+import com.doghotel.reservation.domain.post.repository.PostsScoreRepository;
 import com.doghotel.reservation.domain.room.dto.RoomResponseDto;
 import com.doghotel.reservation.domain.room.service.RoomService;
 import com.doghotel.reservation.domain.tag.service.TagService;
@@ -30,6 +32,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class PostsService {
     private final PostsRepository postsRepository;
+    private final PostsScoreRepository postsScoreRepository;
     private final PostsRepositoryImpl postsRepositoryImpl;
     private final CompanyVerifyService companyVerifyService;
     private final PostsImgService postsImgService;
@@ -47,6 +50,10 @@ public class PostsService {
         saveImages(multipartFiles, posts);
 
         tagService.createTag(dto.getTagList(), posts);
+
+        PostsScore postsScore = new PostsScore(posts);
+        postsScoreRepository.save(postsScore);
+
 
         return posts.getTitle();
     }

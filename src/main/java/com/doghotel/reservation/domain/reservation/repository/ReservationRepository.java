@@ -58,7 +58,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "on r.room.roomId = r1.roomId " +
             "where r.customer.customerId = :customerId and " +
             ":currentDate <= r.checkInDate" +
-            " and r.status = com.doghotel.reservation.domain.reservation.entity.Status.ACCEPTED ")
+            " and r.status in ('RESERVED' , 'ACCEPTED', 'VISITED') ")
     Page<ReservationResponseDto> findByCustomerIdBeforeCheckIn(Long customerId, Pageable pageable, LocalDate currentDate);
 
     @Query("select new com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto(" +

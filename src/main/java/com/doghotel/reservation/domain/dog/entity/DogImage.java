@@ -1,12 +1,15 @@
 package com.doghotel.reservation.domain.dog.entity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DogImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

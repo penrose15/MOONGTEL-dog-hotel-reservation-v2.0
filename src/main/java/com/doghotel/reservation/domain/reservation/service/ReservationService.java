@@ -142,6 +142,9 @@ public class ReservationService {
 
             reservation = reservationRepository.save(reservation);
             List<Long> dogIdList = reservationDto.getDogList();
+            if(dogIdList.size() > reservationCreateDto.getTotalCount()) {
+                throw new IllegalArgumentException("선택한 방의 개수만큼만 보낼 수 있습니다.");
+            }
             List<ReservedDogs> reservedDogsList = new ArrayList<>();
             for(int i = 0; i<dogIdList.size(); i++) {
                 ReservedDogs reservedDogs = ReservedDogs.builder()
@@ -157,10 +160,9 @@ public class ReservationService {
 
         return new ReservationIdDto(reservationIdList);
     }
-    public List<ReservationCompleteDto> reservationComplete(ReservationIdDto dto, String email) {
+    public List<ReservationCompleteDto> reservationComplete(List<Long> reservationIdList, String email) {
         List<ReservationCompleteDto> reservationCompleteDtos = new ArrayList<>();
 
-        List<Long> reservationIdList = dto.getReservationIdList();
         for (Long aLong : reservationIdList) {
             Reservation reservation = reservationRepository.findById(aLong)
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 예약"));
