@@ -6,6 +6,8 @@ import com.doghotel.reservation.domain.reservation.dto.ReservationResponseDto;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import com.doghotel.reservation.domain.reservation.entity.Status;
 import com.doghotel.reservation.domain.reservation.repository.ReservationRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+
+import static com.doghotel.reservation.global.exception.ExceptionCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class CompanyReservationService {
     public void changeReservationStatus(Long reservationId, String email, String status) {
         Reservation reservation = findReservation(reservationId);
         if(!reservation.getCompany().equals(verifyCompany(email))) {
-            throw new IllegalArgumentException("다른 회사의 예약은 못건든다.");
+            throw new BusinessLogicException(ONLY_YOUR_COMPANYS_RESERVATION_CAN_BE_EDIT);
         }
         reservation.changeStatus(status);
         log.info("reservation status changed : " + reservation.getStatus().getStatus());
@@ -40,7 +44,7 @@ public class CompanyReservationService {
     public void changeReservationStatusToCanceled(Long reservationId, String email) {
         Reservation reservation = findReservation(reservationId);
         if(!reservation.getCompany().equals(verifyCompany(email))) {
-            throw new IllegalArgumentException("다른 회사의 예약은 못건든다.");
+            throw new BusinessLogicException(ONLY_YOUR_COMPANYS_RESERVATION_CAN_BE_EDIT);
         }
         reservation.changeStatus("CANCELED");
     }
@@ -64,10 +68,10 @@ public class CompanyReservationService {
 
     private Company verifyCompany(String email) {
         return companyRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new BusinessLogicException(COMPANY_NOT_FOUND));
     }
     private Reservation findReservation(Long reservationId) {
         return reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new  NoSuchElementException());
+                .orElseThrow(() -> new BusinessLogicException(RESERVATION_NOT_FOUND));
     }
 }

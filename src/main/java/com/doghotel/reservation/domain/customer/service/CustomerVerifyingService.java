@@ -2,6 +2,8 @@ package com.doghotel.reservation.domain.customer.service;
 
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,6 @@ public class CustomerVerifyingService {
 
     public Customer findByEmail(String email) {
         return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException(" 존재하지 않는 유저"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 }

@@ -8,6 +8,8 @@ import com.doghotel.reservation.domain.customer.dto.CustomerUpdateRequestDto;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.repository.CustomerRepository;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class CustomerService {
     public String updateCustomer(String email,  CustomerUpdateRequestDto request, Long customerId) {
         Customer customer = findByEmail(email);
         if(customer.getCustomerId() != customerId) {
-            throw new IllegalArgumentException("customer 식별자 다름");
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_ID_NOT_MATCH);
         }
 
         customer = customer.updateCustomer(request);
@@ -65,7 +67,7 @@ public class CustomerService {
     public CustomerProfileViewResponseDto getCustomerProfile(String email, Long customerId) {
         Customer customer = findByEmail(email);
         if(customer.getCustomerId() != customerId) {
-            throw new IllegalArgumentException("회원 식별자 다름");
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_ID_NOT_MATCH);
         }
 
         return new  CustomerProfileViewResponseDto(customer.getUsername(),
@@ -80,13 +82,13 @@ public class CustomerService {
         Optional<Customer> customer = customerRepository.findByEmail(email);
 
         if(company.isPresent() || customer.isPresent()) {
-            throw new IllegalArgumentException("중복되는 이메일");
+            throw new BusinessLogicException(ExceptionCode.DUPLICATE_EMAIL);
         }
     }
 
 
     public Customer findByEmail(String email) {
         return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException(" 존재하지 않는 유저"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 }

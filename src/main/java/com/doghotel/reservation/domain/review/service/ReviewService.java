@@ -20,6 +20,8 @@ import com.doghotel.reservation.domain.review.repository.ReviewImgRepository;
 import com.doghotel.reservation.domain.review.repository.ReviewRepository;
 import com.doghotel.reservation.domain.review.repository.ReviewRepositoryImpl;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static com.doghotel.reservation.global.exception.ExceptionCode.IMAGE_COUNT_LIMIT_3;
+import static com.doghotel.reservation.global.exception.ExceptionCode.REVIEW_NOT_FOUND;
 
 @Transactional
 @Slf4j
@@ -79,7 +84,7 @@ public class ReviewService {
     public List<ReviewImageDto> createReviewImage(List<MultipartFile> files) throws IOException {
         List<ReviewImageDto> reviewImageDtos = new ArrayList<>();
 
-        if(files.size() > 3) throw new IllegalArgumentException();
+        if(files.size() > 3) throw new BusinessLogicException(IMAGE_COUNT_LIMIT_3);
 
         for (MultipartFile file : files) {
             String originalFileName = awss3Service.originalFileName(file);
@@ -98,8 +103,7 @@ public class ReviewService {
     }
 
     public void deleteReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Review review = findByReviewId(reviewId);
         List<ReviewImg> reviewImgs = reviewImgRepository.findByReviewId(reviewId);
 
         postsScoreService.minusScore(review.getCompany().getCompanyId(), review.getScore());
@@ -119,8 +123,7 @@ public class ReviewService {
     }
 
     public ReviewResponseDto showReview(Long reviewId, String email) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Review review = findByReviewId(reviewId);
         ReviewResponseDto result = reviewRepositoryImpl.findByReviewId(reviewId);
         Customer customer = customerVerifyingService.findByEmail(email);
         if(review.getCustomer().getCustomerId() != customer.getCustomerId()) {
@@ -137,6 +140,11 @@ public class ReviewService {
 
         return reviewRepositoryImpl.findByCompanyId(companyId, pageable);
 
+    }
+
+    private Review findByReviewId(long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new BusinessLogicException(REVIEW_NOT_FOUND));
     }
 
 

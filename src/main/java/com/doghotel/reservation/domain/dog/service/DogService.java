@@ -8,7 +8,8 @@ import com.doghotel.reservation.domain.dog.entity.DogImage;
 import com.doghotel.reservation.domain.dog.repository.DogImageRepository;
 import com.doghotel.reservation.domain.dog.repository.DogRepository;
 import com.doghotel.reservation.global.aws.service.AWSS3Service;
-import com.doghotel.reservation.infra.updateImgFile;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -80,8 +80,7 @@ public class DogService{
 
     public String updateDog(Long dogId, DogUpdateDto dto, String email) throws IOException {
         Customer customer = verifyingService.findByEmail(email); //verify
-        Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
+        Dog dog = findDogById(dogId);
 
         dog.updateDog(dto);
 
@@ -94,11 +93,10 @@ public class DogService{
 
     public DogResponseDto showDogByDogId(Long dogId, String email) {
         Customer customer = verifyingService.findByEmail(email);
-        Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 강아지"));
+        Dog dog = findDogById(dogId);
 
         if(!dog.getCustomer().equals(customer)) {
-            throw new IllegalArgumentException("본인의 강아지만 조회 가능합니다.");
+            throw new BusinessLogicException(ExceptionCode.ONLY_EDIT_SELECT_DELETE_YOUR_PUPPY);
         }
 
         return DogResponseDto.of(dog);
@@ -113,15 +111,19 @@ public class DogService{
         .collect(Collectors.toList());
     }
 
-    public void deleteDog(Long dogId, String email) {
-        Dog dog = dogRepository.findById(dogId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강아지"));
+    public void deleteDog(long dogId, String email) {
+        Dog dog = findDogById(dogId);
         Customer customer = verifyingService.findByEmail(email);
         if(!dog.getCustomer().equals(customer)) {
-            throw new IllegalArgumentException("다른 강아지는 삭제불가");
+            throw new BusinessLogicException(ExceptionCode.ONLY_EDIT_SELECT_DELETE_YOUR_PUPPY);
         }
 
         dogRepository.deleteById(dogId);
+    }
+
+    private Dog findDogById(long dogId) {
+        return dogRepository.findById(dogId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOG_NOT_FOUND));
     }
 
 

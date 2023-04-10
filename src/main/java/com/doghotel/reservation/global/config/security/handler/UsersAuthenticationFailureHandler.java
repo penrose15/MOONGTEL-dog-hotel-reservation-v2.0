@@ -1,6 +1,6 @@
 package com.doghotel.reservation.global.config.security.handler;
 
-import com.doghotel.reservation.global.response.ErrorResponse;
+import com.doghotel.reservation.global.exception.ErrorResponse;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

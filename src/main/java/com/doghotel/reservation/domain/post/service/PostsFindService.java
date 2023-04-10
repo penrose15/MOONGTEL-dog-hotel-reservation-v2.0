@@ -3,6 +3,8 @@ package com.doghotel.reservation.domain.post.service;
 
 import com.doghotel.reservation.domain.post.entity.Posts;
 import com.doghotel.reservation.domain.post.repository.PostsRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +19,11 @@ public class PostsFindService {
 
     public Posts findById(Long postsId) {
         return postsRepository.findById(postsId)
-                .orElseThrow(() -> new NoSuchElementException("존재핞는 홍보글"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
     }
 
     public Posts findByCompanyId(Long companyId) {
         return postsRepository.findPostsByCompanyId(companyId)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
     }
 }

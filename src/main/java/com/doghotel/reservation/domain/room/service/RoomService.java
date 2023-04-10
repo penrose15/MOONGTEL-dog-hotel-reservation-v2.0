@@ -6,6 +6,8 @@ import com.doghotel.reservation.domain.room.dto.RoomDto;
 import com.doghotel.reservation.domain.room.dto.RoomResponseDto;
 import com.doghotel.reservation.domain.room.entity.Room;
 import com.doghotel.reservation.domain.room.repository.RoomRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,6 +105,6 @@ public class RoomService {
 
     private Company verifyCompany(String email) {
         return companyRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("유령회사...?"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
     }
 }

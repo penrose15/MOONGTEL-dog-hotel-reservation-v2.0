@@ -1,6 +1,5 @@
-package com.doghotel.reservation.global.response;
+package com.doghotel.reservation.global.exception;
 
-import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;

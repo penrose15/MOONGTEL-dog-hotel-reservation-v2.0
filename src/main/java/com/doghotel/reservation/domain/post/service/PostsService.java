@@ -13,6 +13,8 @@ import com.doghotel.reservation.domain.post.repository.PostsScoreRepository;
 import com.doghotel.reservation.domain.room.dto.RoomResponseDto;
 import com.doghotel.reservation.domain.room.service.RoomService;
 import com.doghotel.reservation.domain.tag.service.TagService;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,7 +73,7 @@ public class PostsService {
         Company company = companyVerifyService.verifyingEmail(email);
         Posts posts = findPosts(postsId);
         if(!posts.getCompany().equals(company)) {
-            throw new IllegalArgumentException("본인의 포스트만 수정 가능합니다.");
+            throw new BusinessLogicException(ExceptionCode.ONLY_YOUR_OWN_POST_CAN_BE_EDITED);
         }
         posts.updatePosts(dto);
 
@@ -112,6 +114,6 @@ public class PostsService {
 
     private Posts findPosts(Long postsId) {
         return postsRepository.findById(postsId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
     }
 }

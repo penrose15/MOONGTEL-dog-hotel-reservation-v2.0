@@ -5,6 +5,8 @@ import com.doghotel.reservation.domain.tag.entity.PostsTagMap;
 import com.doghotel.reservation.domain.tag.entity.Tag;
 import com.doghotel.reservation.domain.tag.repository.PostTagMapRepository;
 import com.doghotel.reservation.domain.tag.repository.TagRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +23,8 @@ public class TagService {
     private final TagRepository tagRepository;
 
     public String createTag(List<String> tags, Posts posts) {
-        if(tags.size() >10 || tags.size() < 1) {
-            throw new IllegalArgumentException("태그는 10개 이하로만 작성해주세요");
+        if(tags.size() >10) {
+            throw new BusinessLogicException(ExceptionCode.TAG_COUNT_LIMIT_10);
         }
 
         List<Tag> tagList = new ArrayList<>();
