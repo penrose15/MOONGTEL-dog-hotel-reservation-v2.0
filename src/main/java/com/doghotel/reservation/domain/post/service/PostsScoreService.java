@@ -20,7 +20,7 @@ public class PostsScoreService {
 
         postsScore.plusTotalScore(score);
         postsScore.plusReviewCount();
-        postsScore.calculateScore();
+//        postsScore.calculateScore();
 
         postsScoreRepository.save(postsScore);
     }
@@ -31,7 +31,7 @@ public class PostsScoreService {
 
         postsScore.minusTotalScore(score);
         postsScore.minusReviewCount();
-        postsScore.calculateScore();
+//        postsScore.calculateScore();
 
         postsScoreRepository.save(postsScore);
     }

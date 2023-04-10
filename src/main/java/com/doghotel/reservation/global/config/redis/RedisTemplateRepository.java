@@ -1,5 +1,6 @@
 package com.doghotel.reservation.global.config.redis;
 
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import com.doghotel.reservation.global.refreshtoken.RefreshToken;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -30,6 +31,22 @@ public class RedisTemplateRepository {
             return Optional.empty();
         }
         return Optional.of(new RefreshToken(refreshToken, email));
+    }
+
+    public void saveAuthCode(String email, String authCode) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(email, authCode);
+        redisTemplate.expire(email, 60L * 10, TimeUnit.SECONDS);
+    }
+
+    public String findEmail(String email) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String authCode = valueOperations.get(email);
+
+        if(Objects.isNull(authCode)) {
+            throw new IllegalArgumentException();
+        }
+        return authCode;
     }
 
 }

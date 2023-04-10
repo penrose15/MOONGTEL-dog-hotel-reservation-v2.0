@@ -7,8 +7,6 @@ import com.doghotel.reservation.global.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -74,6 +72,11 @@ public class Company extends User {
             this.representativeNumber = dto.getRepresentativeNumber();
         }
         return this;
+    }
+    public void updatePassword(String password) {
+        if(password != null) {
+            this.password = password;
+        }
     }
 
     public void updateCompanyImg(String fileName, String url) {

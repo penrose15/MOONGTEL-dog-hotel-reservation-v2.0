@@ -59,6 +59,12 @@ public class Customer extends User {
         return this;
     }
 
+    public void updatePassword(String password) {
+        if(password != null) {
+            this.password = password;
+        }
+    }
+
     public void updateCustomerProfile(String url, String filename) {
         this.profileUrl = url;
         this.profile = filename;

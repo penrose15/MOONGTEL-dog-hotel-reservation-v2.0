@@ -30,11 +30,11 @@ public class ReviewController {
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{company-id}")
+    @PostMapping("/{reservation-id}")
     public ResponseEntity createReview(@RequestBody ReviewPostDto dto,
-                                       @PathVariable(value = "company-id") Long companyId,
+                                       @PathVariable(value = "reservation-id") Long reservationId,
                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        reviewService.createReview(dto.getCreateDto(), dto.getReviewImageDtos(), userDetails.getEmail(), companyId);
+        reviewService.createReview(dto.getCreateDto(), dto.getReviewImageDtos(), userDetails.getEmail(), reservationId);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }

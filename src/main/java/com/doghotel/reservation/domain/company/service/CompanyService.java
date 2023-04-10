@@ -31,7 +31,6 @@ public class CompanyService {
 
         Company company = request.toEntity();
         String email = company.getEmail();
-        verifyingEmail(email);
 
         company = companyRepository.save(company);
 
@@ -76,12 +75,4 @@ public class CompanyService {
 
     }
 
-    private void verifyingEmail(String email) {
-        Optional<Company> company = companyRepository.findByEmail(email);
-        Optional<Customer> customer = customerRepository.findByEmail(email);
-
-        if(company.isPresent() || customer.isPresent()) {
-            throw new IllegalArgumentException("중복되는 이메일");
-        }
-    }
 }

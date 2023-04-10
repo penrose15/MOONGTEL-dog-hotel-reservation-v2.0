@@ -3,6 +3,7 @@ package com.doghotel.reservation.domain.review.entity;
 import com.doghotel.reservation.domain.company.entity.Company;
 import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.post.entity.Posts;
+import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 
     @Builder
     public Review(String title, String content, Double score, Customer customer,Company  company) {
