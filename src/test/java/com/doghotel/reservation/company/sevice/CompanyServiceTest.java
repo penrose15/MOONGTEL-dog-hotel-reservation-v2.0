@@ -58,11 +58,6 @@ public class CompanyServiceTest {
                 .when(passwordEncoder).encode(anyString());
         Company company = request.toEntity();
 
-        doReturn(Optional.empty())
-                .when(companyRepository).findByEmail(anyString());
-        doReturn(Optional.empty())
-                .when(customerRepository).findByEmail(anyString());
-
         doReturn(company)
                 .when(companyRepository).save(any(Company.class));
 

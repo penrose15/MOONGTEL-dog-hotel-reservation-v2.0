@@ -6,6 +6,8 @@ import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.service.CustomerVerifyingService;
 import com.doghotel.reservation.domain.dog.dto.DogResponseDto;
 import com.doghotel.reservation.domain.dog.service.DogService;
+import com.doghotel.reservation.domain.post.entity.Posts;
+import com.doghotel.reservation.domain.post.repository.PostsRepository;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import com.doghotel.reservation.domain.reservation.entity.ReservedDogs;
@@ -14,6 +16,8 @@ import com.doghotel.reservation.domain.reservation.repository.ReservationReposit
 import com.doghotel.reservation.domain.reservation.repository.ReservedDogIdRepository;
 import com.doghotel.reservation.domain.room.entity.Room;
 import com.doghotel.reservation.domain.room.repository.RoomRepository;
+import com.doghotel.reservation.global.exception.BusinessLogicException;
+import com.doghotel.reservation.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+    private final PostsRepository postsRepository;
     private final RoomRepository roomRepository;
     private final CustomerVerifyingService customerVerifyingService;
     private final CompanyRepository companyRepository;
@@ -41,8 +46,9 @@ public class ReservationService {
     public ReservationCreateDto registerReservation(RegisterReservationDto dto, String email, Long postsId) {
         //validation
         Customer customer = customerVerifyingService.findByEmail(email);
-        Company company = companyRepository.findByPostsId(postsId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Posts posts = postsRepository.findById(postsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
+        Company company = posts.getCompany();
 
         LocalDate checkIn = LocalDate.parse(dto.getCheckInDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate checkOut = LocalDate.parse(dto.getCheckOutDate(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -121,12 +127,13 @@ public class ReservationService {
 
     public ReservationIdDto createReservation(ReservationCreateDto reservationCreateDto, String email, Long postsId) {
         if (!reservationCreateDto.getCustomerEmail().equals(email)) {
-            throw new IllegalArgumentException("중간에 사용자가 바뀜...?");
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_MATCH);
         }
 
         Customer customer = customerVerifyingService.findByEmail(email);
-        Company company = companyRepository.findByPostsId(postsId)
-                .orElseThrow(() -> new NoSuchElementException());
+        Posts posts = postsRepository.findById(postsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.POST_NOT_FOUND));
+        Company company = posts.getCompany();
 
         List<Long> reservationIdList = new ArrayList<>();
         List<ReservationDto> reservationDtos = reservationCreateDto.getReservationDtos();
@@ -134,7 +141,7 @@ public class ReservationService {
             Reservation reservation = reservationDto.toEntity();
             Long roomId = reservationDto.getRoomId();
             Room room = roomRepository.findById(roomId)
-                            .orElseThrow(() -> new NoSuchElementException());
+                            .orElseThrow(() -> new BusinessLogicException(ExceptionCode.ROOM_NOT_FOUND));
 
             reservation.designateCustomer(customer);
             reservation.designateCompany(company);

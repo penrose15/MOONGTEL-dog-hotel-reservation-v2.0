@@ -6,6 +6,7 @@ import com.doghotel.reservation.domain.customer.entity.Customer;
 import com.doghotel.reservation.domain.customer.service.CustomerVerifyingService;
 import com.doghotel.reservation.domain.dog.service.DogService;
 import com.doghotel.reservation.domain.post.entity.Posts;
+import com.doghotel.reservation.domain.post.repository.PostsRepository;
 import com.doghotel.reservation.domain.reservation.dto.*;
 import com.doghotel.reservation.domain.reservation.entity.Reservation;
 import com.doghotel.reservation.domain.reservation.entity.ReservedDogs;
@@ -55,6 +56,9 @@ public class ReservationServiceTest {
     @Mock
     private DogService dogService;
 
+    @Mock
+    private PostsRepository postsRepository;
+
     @InjectMocks
     private ReservationService reservationService;
 
@@ -65,6 +69,7 @@ public class ReservationServiceTest {
     private Long postsId;
     private Customer customer;
     private Company company;
+    private Posts posts;
     private Room room;
     private Reservation reservation1;
     private Reservation reservation2;
@@ -99,7 +104,7 @@ public class ReservationServiceTest {
                 .password("password1234!")
                 .build();
 
-        Posts posts = Posts.builder()
+        posts = Posts.builder()
                 .title("title")
                 .content("content")
                 .longitude("1111111")
@@ -160,8 +165,8 @@ public class ReservationServiceTest {
         //when
         doReturn(customer)
                 .when(customerVerifyingService).findByEmail(email);
-        doReturn(Optional.of(company))
-                .when(companyRepository).findByPostsId(postsId);
+        doReturn(Optional.of(posts))
+                .when(postsRepository).findById(postsId);
         doReturn(Optional.ofNullable(room))
                 .when(roomRepository).findById(anyLong());
         doReturn(reservationList)
@@ -185,8 +190,8 @@ public class ReservationServiceTest {
         //when
         doReturn(customer)
                 .when(customerVerifyingService).findByEmail(email);
-        doReturn(Optional.of(company))
-                .when(companyRepository).findByPostsId(postsId);
+        doReturn(Optional.of(posts))
+                .when(postsRepository).findById(postsId);
         doReturn(Optional.ofNullable(room))
                 .when(roomRepository).findById(anyLong());
         doReturn(reservationList)
@@ -209,8 +214,8 @@ public class ReservationServiceTest {
         init();
         doReturn(customer)
                 .when(customerVerifyingService).findByEmail(email);
-        doReturn(Optional.ofNullable(company))
-                .when(companyRepository).findByPostsId(postsId);
+        doReturn(Optional.of(posts))
+                .when(postsRepository).findById(postsId);
         doReturn(Optional.ofNullable(room))
                 .when(roomRepository).findById(anyLong());
         Reservation reservation = reservationDto.toEntity();

@@ -24,28 +24,9 @@ public class TestScheduler {
     private final Job job;
     private final JobLauncher jobLauncher;
 
-    @Scheduled(cron = "0 59 23 * * *")
-    public void startJob() {
-        try {
-            Map<String, JobParameter> jobParameterMap = new HashMap<>();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date time = new Date();
-            String time1 = format.format(time);
-            jobParameterMap.put("requestDate", new JobParameter(time1));
-            JobParameters parameters = new JobParameters(jobParameterMap);
-
-            JobExecution jobExecution = jobLauncher.run(job, parameters);
-            while (jobExecution.isRunning()) {
-                log.info("is running");
-            }
-        } catch (JobExecutionAlreadyRunningException e) {
-            e.printStackTrace();
-        } catch (JobRestartException e) {
-            e.printStackTrace();
-        } catch (JobInstanceAlreadyCompleteException e) {
-            e.printStackTrace();
-        } catch (JobParametersInvalidException e) {
-            e.printStackTrace();
-        }
+    @Scheduled(cron = "0 59 23 * * ?")
+    public void startJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        JobParameters jobParameters = new JobParameters();
+        jobLauncher.run(job, jobParameters);
     }
 }

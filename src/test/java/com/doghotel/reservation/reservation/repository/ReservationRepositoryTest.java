@@ -20,12 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -33,9 +35,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
-@Import({QueryDslConfig.class})
+@SpringBootTest
+@Transactional
 public class ReservationRepositoryTest {
 
     @Autowired
@@ -48,9 +49,6 @@ public class ReservationRepositoryTest {
     private CustomerRepository customerRepository;
     @Autowired
     private RoomRepository roomRepository;
-    @Autowired
-    EntityManager em;
-    JPAQueryFactory queryFactory;
 
     private Customer customer;
     private Company company;
@@ -59,7 +57,6 @@ public class ReservationRepositoryTest {
 
     @BeforeEach
     public void init() {
-        queryFactory = new JPAQueryFactory(em);
 
         customer = Customer.builder()
                 .username("name")

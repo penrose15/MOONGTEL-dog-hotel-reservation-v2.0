@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Transactional
@@ -43,7 +42,7 @@ public class CustomerService {
     public String updateCustomer(String email,  CustomerUpdateRequestDto request, Long customerId) {
         Customer customer = findByEmail(email);
         if(customer.getCustomerId() != customerId) {
-            throw new BusinessLogicException(ExceptionCode.CUSTOMER_ID_NOT_MATCH);
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_MATCH);
         }
 
         customer = customer.updateCustomer(request);
@@ -67,7 +66,7 @@ public class CustomerService {
     public CustomerProfileViewResponseDto getCustomerProfile(String email, Long customerId) {
         Customer customer = findByEmail(email);
         if(customer.getCustomerId() != customerId) {
-            throw new BusinessLogicException(ExceptionCode.CUSTOMER_ID_NOT_MATCH);
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_MATCH);
         }
 
         return new  CustomerProfileViewResponseDto(customer.getUsername(),

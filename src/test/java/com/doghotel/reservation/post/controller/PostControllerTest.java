@@ -6,16 +6,21 @@ import com.doghotel.reservation.domain.post.dto.*;
 import com.doghotel.reservation.domain.post.service.PostsService;
 import com.doghotel.reservation.domain.room.dto.RoomResponseDto;
 import com.doghotel.reservation.global.auth.WithAuthCompany;
+import com.doghotel.reservation.global.batch.BatchConfiguration;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
@@ -48,7 +53,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = PostsController.class)
+@WebMvcTest(value = PostsController.class ,
+        excludeAutoConfiguration = BatchConfiguration.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureRestDocs
 public class PostControllerTest {
@@ -89,7 +95,7 @@ public class PostControllerTest {
         MockPart part = new MockPart("dto", gson.toJson(postsDto).getBytes(StandardCharsets.UTF_8));
         part.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         ResultActions actions = mockMvc
-                .perform(multipart("/v1/post")
+                .perform(multipart("/v1/post/company")
                         .file(files)
                         .part(part)
                         .header("Authorization","Bearer+ accesstoken")
@@ -140,7 +146,7 @@ public class PostControllerTest {
                 .when(postsService).updatePosts(email, postsId, updateDto, List.of(file));
 
         ResultActions actions = mockMvc.perform(
-                multipart("/v1/post/{post-id}", 1L)
+                multipart("/v1/post/company/{post-id}", 1L)
                         .part(dto)
                         .file(file)
                         .header("Authorization", "Bearer + accessTokne")
