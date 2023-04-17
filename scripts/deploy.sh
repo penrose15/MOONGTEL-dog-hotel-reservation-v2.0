@@ -16,7 +16,7 @@ fi
 #cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
 echo "nohup java -jar -Dspring.config.location=/home/ec2-user/app/${real},/home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
 java -jar \
-  -Dspring.config.location=${real},/home/ec2-user/app/application-db.yml \
+  -Dspring.config.location=/home/ec2-user/app/${real},/home/ec2-user/app/application-db.yml \
    /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar
 
 for retry_count in $(seq 10)
