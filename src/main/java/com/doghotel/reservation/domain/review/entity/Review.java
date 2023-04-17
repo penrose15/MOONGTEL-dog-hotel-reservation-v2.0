@@ -51,4 +51,8 @@ public class Review {
         this.customer = customer;
         this.company = company;
     }
+
+    public void designateReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
 }

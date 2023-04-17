@@ -65,6 +65,7 @@ public class ReviewService {
         if(verifyReview.isPresent()) throw new IllegalArgumentException("리뷰는 에약 한건당 하나만 달 수 있습니다.");
 
         Review review = dto.toEntity(company, customer);
+        review.designateReservation(reservation);
         review = reviewRepository.save(review);
 
         List<ReviewImg> reviewImgs = new ArrayList<>();
