@@ -1,38 +1,46 @@
 #!/bin/bash
 
-BUILD_JAR=$(ls /home/ubuntu/jenkins/server2/build/libs/server-0.0.1-SNAPSHOT.jar)
-JAR_NAME=$(basename $BUILD_JAR)
-
-echo "chmod +x /home/jenkins"
-echo "hello"
-
-sudo chmod 777 /home/jenkins
 
 
-echo "> 현재 시간: $(date)" >> /home/ubuntu/jenkins/deploy.log
 
-echo "> build filename: $JAR_NAME" >> /home/ubuntu/jenkins/deploy.log
-
-echo "> build 파일 복사" >> /home/ubuntu/jenkins/deploy.log
-
-DEPLOY_PATH=/home/ubuntu/jenkins
-
-cp $BUILD_JAR /home/ubuntu/jenkins
-
-echo "> 현재 실행중인 애플리케이션 pid 확인" >> /home/jenkins/deploy.log
-
-CURRENT_PID=$(pgrep -f $JAR_NAME)
-
-if [ -z $CURRENT_PID ]
+if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
-  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ubuntu/jenkins/deploy.log
+    deployment_target=${blue_port}
+		real="application-real1.yml"
 else
-  echo "> kill -9 $CURRENT_PID" >> /home/ubuntu/jenkins/deploy.log
-  sudo kill -9 $CURRENT_PID
-  sleep 5
+    deployment_target=${green_port}
+		real="application.real2.yml"
 fi
 
+scp ./build/libs/reservation-0.0.1-SNAPSHOT.jar "ec2-user@${ip}:/home/ec2-user/reservation"
+nohup java -jar -Dspring.config.location=classpath:/${real}, /home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
-DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
-echo "> DEPLOY_JAR 배포"    >> /home/ubuntu/jenkins/deploy.log
-sudo nohup java -jar $DEPLOY_JAR >> /home/ubuntu/jenkins/deploy.log 2>/home/ubuntu/jenkins/deploy_err.log &
+for retry_count in $(seq 10)
+do
+  if curl -s "http://localhost:${deployment_target}" > /dev/null
+  then
+      echo "Health check success ✅"
+      break
+  fi
+
+  if [ $retry_count -eq 10 ]
+  then
+    echo "Health check failed ❌"
+    exit 1
+  fi
+
+	echo "The server is not alive yet. Retry health check in 10 seconds..."
+	sleep 10
+done
+
+echo "set \$service_url http://localhost:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
+ssh ec2-user@${ip} "service nginx reload"
+echo "Switch the reverse proxy direction of nginx to ${ip} 🔄"
+
+if [ "${deployment_target}" == "${blue_port}" ]
+then
+    fuser -s -k ${green_port}/tcp
+else
+    fuser -s -k ${blue_port}/tcp
+fi
+echo "Kill the process on the opposite server."
