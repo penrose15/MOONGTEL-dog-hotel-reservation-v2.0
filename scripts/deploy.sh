@@ -14,8 +14,10 @@ else
 fi
 
 #cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
-echo "nohup java -jar -Dspring.config.location=classpath:/${real}, /home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
-nohup java -jar -Dspring.config.location=classpath:/${real}, /home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+echo "nohup java -jar -Dspring.config.location=classpath:/${real},/home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
+nohup java -jar \
+  -Dspring.config.location=classpath:/${real},/home/ec2-user/app/application-db.yml \
+   /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
 for retry_count in $(seq 10)
 do
