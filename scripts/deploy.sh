@@ -3,7 +3,6 @@
 blue_port=8080
 green_port=8081
 
-ls
 
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
@@ -14,7 +13,7 @@ else
 		real="application.real2.yml"
 fi
 
-cp reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
+#cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
 nohup java -jar -Dspring.config.location=classpath:/${real}, /home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
 for retry_count in $(seq 10)
