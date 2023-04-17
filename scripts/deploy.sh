@@ -1,6 +1,7 @@
 #!/bin/bash
 
-
+blue_port=8080
+green_port=8081
 
 
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
@@ -12,7 +13,7 @@ else
 		real="application.real2.yml"
 fi
 
-scp ./build/libs/reservation-0.0.1-SNAPSHOT.jar "ec2-user@${ip}:/home/ec2-user/reservation"
+cp ./build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
 nohup java -jar -Dspring.config.location=classpath:/${real}, /home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
 for retry_count in $(seq 10)
@@ -34,8 +35,8 @@ do
 done
 
 echo "set \$service_url http://localhost:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
-ssh ec2-user@${ip} "service nginx reload"
-echo "Switch the reverse proxy direction of nginx to ${ip} 🔄"
+service nginx reload
+echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 if [ "${deployment_target}" == "${blue_port}" ]
 then
