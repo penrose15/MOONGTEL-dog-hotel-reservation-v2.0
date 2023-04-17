@@ -7,14 +7,14 @@ green_port=8081
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
     deployment_target=${blue_port}
-		real="application-real1.yml"
+		real="real1"
 else
     deployment_target=${green_port}
-		real="application-real2.yml"
+		real="real2"
 fi
 
 #cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
-echo "nohup java -jar -Dspring.config.location=classpath:/${real},/home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
+echo "nohup java -jar -Dspring.profiles.active=${real},/home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
 java -jar \
   -Dspring.config.location=${real},/home/ec2-user/app/application-db.yml \
    /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar
