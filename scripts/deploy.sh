@@ -10,7 +10,7 @@ then
 		real="application-real1.yml"
 else
     deployment_target=${green_port}
-		real="application.real2.yml"
+		real="application-real2.yml"
 fi
 
 #cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
