@@ -30,7 +30,7 @@ docker run -d --name myredis -p 6379:6379 redis
 
 for retry_count in $(seq 10)
 do
-  if curl -s "http://localhost:${deployment_target}" > /dev/null
+  if curl -s "http://localhost:${deployment_target}/profile" > /dev/null
   then
       echo "Health check success ✅"
       break
