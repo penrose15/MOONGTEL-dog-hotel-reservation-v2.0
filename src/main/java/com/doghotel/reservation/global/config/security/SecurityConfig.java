@@ -50,6 +50,8 @@ public class SecurityConfig{
                 .permitAll()
                 .antMatchers("/api/login")
                 .permitAll()
+                .antMatchers("/profile")
+                .permitAll()
                 .antMatchers("/v1/company/account")
                 .permitAll()
                 .antMatchers("/v1/customer/account")
