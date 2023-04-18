@@ -24,9 +24,9 @@ else
 fi
 
 echo "docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0"
-docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0
+docker run -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0
 
-docker run --name myredis -p 6379:6379 redis
+docker run -d --name myredis -p 6379:6379 redis
 
 HEALTH_CHECK_URL="http://localhost:${deployment_target}/profile"
 EXPECTED_STATUS_CODE=200
