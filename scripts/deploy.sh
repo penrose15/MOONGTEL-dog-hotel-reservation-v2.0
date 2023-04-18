@@ -1,23 +1,31 @@
 #!/bin/bash
 
+
+sudo docker ps -a -q --filter "name=hsj" | grep -q . && docker stop hsj && docker rm hsj | true
+
+sudo docker ps -a -q --filter "name=myredis" | grep -q . && docker stop myredis && docker rm myredis | true
+
+# 기존 이미지 삭제
+echo "sudo docker rmi admin1125/hsj:1.0"
+sudo docker rmi admin1125/hsj:1.0
+
+# 도커허브 이미지 pull
+echo "sudo docker pull admin1125/hsj:1.0"
+sudo docker pull admin1125/hsj:1.0
+
 blue_port=8080
 green_port=8081
-
 
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
     deployment_target=${blue_port}
-		real="application-real1.yml"
 else
     deployment_target=${green_port}
-		real="application-real2.yml"
 fi
 
-#cp build/libs/reservation-0.0.1-SNAPSHOT.jar /home/ec2-user/reservation
-echo "nohup java -jar -Dspring.config.location=/home/ec2-user/app/${real},/home/ec2-user/app/application-db.yml /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
-java -jar \
-  -Dspring.config.location=/home/ec2-user/app/${real},/home/ec2-user/app/application-db.yml \
-   /home/ec2-user/reservation/reservation-0.0.1-SNAPSHOT.jar
+echo "docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0"
+docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0
+
 
 for retry_count in $(seq 10)
 do
@@ -48,3 +56,5 @@ else
     fuser -s -k ${blue_port}/tcp
 fi
 echo "Kill the process on the opposite server."
+
+docker rmi -f $(docker images -f "dangling=true" -q) || true
