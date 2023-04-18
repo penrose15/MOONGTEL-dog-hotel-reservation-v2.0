@@ -26,6 +26,7 @@ fi
 echo "docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0"
 docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0
 
+docker run -d --name myredis -p 6379:6379 redis
 
 for retry_count in $(seq 10)
 do
