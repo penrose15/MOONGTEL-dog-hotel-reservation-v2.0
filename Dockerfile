@@ -4,7 +4,7 @@ ARG JAR_FILE=build/libs/*.jar
 
 COPY ${JAR_FILE} app.jar
 
-ARG YML
+ENV YML="application-real1.yml"
 
 
 RUN echo "run jar"

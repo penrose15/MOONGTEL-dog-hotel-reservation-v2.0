@@ -26,7 +26,7 @@ else
 fi
 
 echo "docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0"
-docker run -d -p ${deployment_target}:${deployment_target} --build-arg YML=${y} --name hsj admin1125/hsj:1.0
+docker run -d -p ${deployment_target}:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
 
 docker run -d --name myredis -p 6379:6379 redis
 
