@@ -28,18 +28,22 @@ docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0
 
 docker run -d --name myredis -p 6379:6379 redis
 
+
+
 for retry_count in $(seq 10)
 do
-  if curl -s "http://localhost:${deployment_target}/profile" > /dev/null
+  HEALTH_CHECK_URL="http://localhost:${deployment_target}/profile"
+  EXPECTED_STATUS_CODE=200
+
+  http_status=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
+
+  if [ ${http_status} -eq ${EXPECTED_STATUS_CODE} ]
   then
       echo "Health check success ✅"
-      break
-  fi
-
-  if [ $retry_count -eq 10 ]
-  then
-    echo "Health check failed ❌"
-    exit 1
+      exit 0
+  else
+      echo "Health check failed ❌"
+      exit 1
   fi
 
 	echo "The server is not alive yet. Retry health check in 10 seconds..."
