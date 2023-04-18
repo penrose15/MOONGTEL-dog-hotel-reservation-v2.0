@@ -23,8 +23,8 @@ else
     deployment_target=${green_port}
 fi
 
-echo "docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0"
-docker run -d -p 8080:${deployment_target} --name hsj admin1125/hsj:1.0
+echo "docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0"
+docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0
 
 docker run -d --name myredis -p 6379:6379 redis
 
