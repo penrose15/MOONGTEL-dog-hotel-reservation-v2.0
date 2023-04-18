@@ -30,7 +30,7 @@ docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:
 
 docker run -d --name myredis -p 6379:6379 redis
 
-HEALTH_CHECK_URL="http://localhost:${deployment_target}/profile"
+HEALTH_CHECK_URL="http://3.37.219.0:${deployment_target}/profile"
 EXPECTED_STATUS_CODE=200
 
 for retry_count in $(seq 10)
