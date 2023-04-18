@@ -70,7 +70,7 @@ public class BatchConfiguration {
                 .fetchSize(chunkSize)
                 .dataSource(dataSource)
                 .rowMapper(new BeanPropertyRowMapper<>(PostsScore.class))
-                .sql("select * from PostsScore")
+                .sql("select * from posts_score")
                 .name("jdbcCursorItemReader")
                 .build();
     }
