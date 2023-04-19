@@ -71,13 +71,13 @@ docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
-echo "> curl -s http://moongtel.shop:$IDLE_PORT/profile"
+echo "> curl -s http://127.0.0.1:$IDLE_PORT/profile"
 sleep 10
 
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s http://moongtel.shop:${IDLE_PORT}/profile)
+  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
