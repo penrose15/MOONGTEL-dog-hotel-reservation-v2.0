@@ -71,13 +71,13 @@ docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
-echo "> curl -s http://localhost:$IDLE_PORT/profile"
+echo "> curl -s http://moongtel.shop:$IDLE_PORT/profile"
 sleep 10
 
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
+  RESPONSE=$(curl -s http://moongtel.shop:${IDLE_PORT}/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
@@ -102,8 +102,8 @@ do
 done
 
 
-echo "set \$service_url http://localhost:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
-service nginx reload
+echo "set \$service_url http://127.0.0.1:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
+sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 if [ "${deployment_target}" == "${blue_port}" ]
