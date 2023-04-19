@@ -27,8 +27,8 @@ fi
 
 docker run -d --name myredis -p 6379:6379 redis
 
-echo "docker run -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
+echo "docker run -e YML=${y} --name hsj admin1125/hsj:1.0"
+docker run -d -e YML=${y} --name hsj admin1125/hsj:1.0
 
 HEALTH_CHECK_URL="http://localhost/profile"
 
