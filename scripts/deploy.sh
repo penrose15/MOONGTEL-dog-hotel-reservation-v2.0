@@ -19,16 +19,11 @@ green_port=8081
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
     deployment_target=${green_port}
-    y="real1"
 else
     deployment_target=${blue_port}
-    y="real2"
 fi
 
 docker run -d --name myredis -p 6379:6379 redis
-
-echo "docker run -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -e YML=${y} --name hsj admin1125/hsj:1.0
 
 HEALTH_CHECK_URL="http://localhost/profile"
 
@@ -62,12 +57,17 @@ function find_idle_port() {
     if [ ${IDLE_PROFILE} == real1 ]
     then
       echo "8080"
+      y="real1"
     else
       echo "8081"
+      y="real2"
     fi
 }
 
 IDLE_PORT=$(find_idle_port)
+
+echo "docker run -e YML=${y} --name hsj admin1125/hsj:1.0"
+docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
