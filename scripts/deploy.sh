@@ -30,29 +30,77 @@ docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:
 
 docker run -d --name myredis -p 6379:6379 redis
 
-HEALTH_CHECK_URL="http://localhost:${deployment_target}/profile"
-EXPECTED_STATUS_CODE=200
+HEALTH_CHECK_URL="http://localhost/profile"
 
-for retry_count in $(seq 10)
+function find_idle_prifile() {
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
+
+      if [ ${HTTP_STATUS} -ge 400 ]
+
+      then
+        CURRENT_PROFILE=real2
+
+      else
+        CURRENT_PROFILE=$(curl -s http://localhost/profile)
+
+      fi
+
+      if [ ${CURRENT_PROFILE} == real1 ]
+      then
+        IDLE_PROFILE=real2
+      else
+        IDLE_PROFILE=real1
+      fi
+
+      echo "${IDLE_PROFILE}"
+
+}
+
+function find_idle_port() {
+    IDLE_PROFILE=$(find_idle_prifile)
+
+    if [ ${IDLE_PROFILE} == real1 ]
+    then
+      echo "8080"
+    else
+      echo "8081"
+    fi
+}
+
+IDLE_PORT=$(find_idle_port)
+
+echo ">health check start"
+echo "IDLE_PORT: $IDLE_PORT"
+echo "> curl -s http://localhost:$IDLE_PORT/profile"
+sleep 10
+
+for RETRY_COUNT in {1..10}
 
 do
-  http_status=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
+  RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
+  UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
-  if [ ${http_status} -eq ${EXPECTED_STATUS_CODE} ]
+  if [ ${UP_COUNT} -ge 1 ]
   then
-      echo "Health check success ✅"
-      break
+    echo "> health check success"
+    switch_proxy
+    break
+  else
+    echo "> health check fail"
+    echo "health check: ${RESPONSE}"
   fi
 
-  if [ $retry_count -eq 10 ]
+  if [ ${RETRY_COUNT} -eq 10 ]
   then
-    echo "Health check failed ❌"
+    echo "> health  check fail"
+    echo "> 엔진엑스에 연결하지 않고 배포 종료"
     exit 1
   fi
 
-	echo "The server is not alive yet. Retry health check in 10 seconds..."
-	sleep 10
+  echo ">health check fail, wait 5 sec..."
+  sleep 5
 done
+
 
 echo "set \$service_url http://localhost:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
 service nginx reload

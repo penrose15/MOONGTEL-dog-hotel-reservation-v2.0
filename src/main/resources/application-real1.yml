@@ -2,7 +2,5 @@ server:
   port: 8080
 
 spring:
-  profiles:
-    include: db
-
-    #-Dspring.profiles.active=mysql
+  config:
+    import: classpath:application-db.yml

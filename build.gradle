@@ -64,7 +64,7 @@ dependencies {
 
 	implementation group: 'io.awspring.cloud', name: 'spring-cloud-starter-aws-parameter-store-config'
 
-	implementation "org.springframework.boot:spring-boot-starter-actuator"
+//	implementation "org.springframework.boot:spring-boot-starter-actuator"
 
 	implementation "com.querydsl:querydsl-jpa:5.0.0"
 	annotationProcessor(
