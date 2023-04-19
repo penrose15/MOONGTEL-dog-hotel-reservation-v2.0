@@ -3,4 +3,4 @@ server:
 
 spring:
   config:
-    import: classpath:application-db.yml
+    import: /reservation/application-db.yml

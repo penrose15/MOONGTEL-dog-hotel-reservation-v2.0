@@ -10,4 +10,4 @@ EXPOSE 8080
 EXPOSE 8081
 
 RUN echo "run jar"
-ENTRYPOINT ["java","-jar","-Dspring.profiles.active=/home/ec2-user/app/${YML}","/app.jar" ]
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=classpath:${YML}","/app.jar" ]
