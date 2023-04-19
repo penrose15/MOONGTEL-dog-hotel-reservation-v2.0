@@ -10,4 +10,5 @@
 - MapStruct -> DTO 내부 Entity로 변환하는 로직 추가
 - @Setter 삭제
 - test 추가 중...
+- spring batch 로 특정 시간에 별점 평균 계산
 
