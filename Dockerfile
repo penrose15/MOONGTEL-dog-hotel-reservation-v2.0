@@ -10,4 +10,4 @@ EXPOSE 8080
 EXPOSE 8081
 
 RUN echo "run jar"
-ENTRYPOINT ["java","-jar","--spring.config.location=/home/ec2-user/app/${YML},/home/ec2-user/app/application-db.yml","/app.jar" ]
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=/home/ec2-user/app/${YML}","/app.jar" ]
