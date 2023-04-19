@@ -18,10 +18,10 @@ green_port=8081
 
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
-    deployment_target=${blue_port}
+    deployment_target=${green_port}
     y="real1"
 else
-    deployment_target=${green_port}
+    deployment_target=${blue_port}
     y="real2"
 fi
 

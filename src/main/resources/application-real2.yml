@@ -3,4 +3,4 @@ server:
 
 spring:
   profiles:
-    include: application-db.yml
+    include: /reservation/application-db.yml

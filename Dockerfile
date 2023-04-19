@@ -4,7 +4,7 @@ ARG JAR_FILE=build/libs/*.jar
 
 COPY ${JAR_FILE} app.jar
 
-ENV YML="application-real1.yml"
+ENV YML="real1"
 
 EXPOSE 8080
 EXPOSE 8081
