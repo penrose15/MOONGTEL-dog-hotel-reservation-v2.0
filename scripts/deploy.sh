@@ -19,16 +19,16 @@ green_port=8081
 if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
 then
     deployment_target=${blue_port}
-    y="application-real1.yml"
+    y="real1"
 else
     deployment_target=${green_port}
-    y="application-real2.yml"
+    y="real2"
 fi
 
-echo "docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0"
-docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
-
 docker run -d --name myredis -p 6379:6379 redis
+
+echo "docker run -d -p ${deployment_target}:${deployment_target} --name hsj admin1125/hsj:1.0"
+docker run -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
 
 HEALTH_CHECK_URL="http://localhost/profile"
 
