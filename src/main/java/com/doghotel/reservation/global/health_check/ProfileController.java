@@ -26,7 +26,7 @@ public class ProfileController {
                 .orElse(defaultProfile);
     }
 
-    @GetMapping("/profile/test")
+    @GetMapping("/test")
     public String test() {
         return "hello";
     }

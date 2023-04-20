@@ -25,7 +25,7 @@ fi
 
 docker run -d --name myredis -p 6379:6379 redis
 
-HEALTH_CHECK_URL="http://localhost/profile"
+HEALTH_CHECK_URL="http://localhost/test"
 
 function find_idle_prifile() {
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
@@ -37,7 +37,7 @@ function find_idle_prifile() {
         CURRENT_PROFILE=real2
 
       else
-        CURRENT_PROFILE=$(curl -s http://localhost/profile)
+        CURRENT_PROFILE=$(curl -s http://localhost/test)
 
       fi
 
@@ -72,13 +72,13 @@ docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
-echo "> curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$IDLE_PORT/profile"
+echo "> curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$IDLE_PORT/test"
 sleep 10
 
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/profile/test)
+  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/test)
   echo " > ${RESPONSE}"
 
   if [ "${RESPONSE}" == "hello" ]
