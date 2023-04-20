@@ -13,21 +13,15 @@ sudo docker rmi admin1125/hsj:1.0
 echo "sudo docker pull admin1125/hsj:1.0"
 sudo docker pull admin1125/hsj:1.0
 
-blue_port=8080
-green_port=8081
-
-if curl -s "http://localhost:${blue_port}" > /dev/null # 서버가 살아있으면
-then
-    deployment_target=${green_port}
-else
-    deployment_target=${blue_port}
-fi
 
 docker run -d --name myredis -p 6379:6379 redis
 
 HEALTH_CHECK_URL="http://localhost/test"
 
-function find_idle_prifile() {
+blue_port=8080
+green_port=8081
+
+function find_idle_profile() {
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
     echo ${HTTP_STATUS}
 
@@ -53,7 +47,7 @@ function find_idle_prifile() {
 }
 
 function find_idle_port() {
-    IDLE_PROFILE=$(find_idle_prifile)
+    IDLE_PROFILE=$(find_idle_profile)
 
     if [ ${IDLE_PROFILE} == real1 ]
     then
@@ -68,7 +62,7 @@ function find_idle_port() {
 IDLE_PORT=$(find_idle_port)
 
 echo "docker run -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -p 8080:${deployment_target} -e YML=${y} --name hsj admin1125/hsj:1.0
+docker run -d -p 8080:${IDLE_PORT} -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
@@ -102,15 +96,20 @@ do
   sleep 5
 done
 
-
-echo "set \$service_url http://127.0.0.1:${deployment_target};" > /etc/nginx/conf.d/service-url.inc
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" > /etc/nginx/conf.d/service-url.inc
 sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
-if [ "${deployment_target}" == "${blue_port}" ]
+
+
+if [ "${IDLE_PORT}" == "${blue_port}" ]
 then
+    PID=$(netstat -lntp grep ${green_port} | grep | LISTEN)
+    kill -9 ${PID}
     fuser -s -k ${green_port}/tcp
 else
+    PID=$(netstat -lntp grep ${blue_port} | grep | LISTEN)
+    kill -9 ${PID}
     fuser -s -k ${blue_port}/tcp
 fi
 echo "Kill the process on the opposite server."
