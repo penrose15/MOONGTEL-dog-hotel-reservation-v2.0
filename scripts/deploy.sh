@@ -29,6 +29,7 @@ HEALTH_CHECK_URL="http://localhost/profile"
 
 function find_idle_prifile() {
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
+    echo ${HTTP_STATUS}
 
       if [ ${HTTP_STATUS} -ge 400 ]
 
