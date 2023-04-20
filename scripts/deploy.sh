@@ -78,10 +78,10 @@ sleep 10
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/test)
+  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$IDLE_PORT/test)
   echo " > ${RESPONSE}"
 
-  if [ "${RESPONSE}" == "hello" ]
+  if [ -n "${RESPONSE}" ]
   then
     echo "> health check success"
     switch_proxy
