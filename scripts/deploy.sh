@@ -78,7 +78,7 @@ sleep 10
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${IDLE_PORT}/profile/test)
+  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/profile/test)
   echo " > ${RESPONSE}"
 
   if [ "${RESPONSE}" == "hello" ]
