@@ -74,11 +74,14 @@ echo "IDLE_PORT: $IDLE_PORT"
 echo "> curl -s http://127.0.0.1:$IDLE_PORT/profile"
 sleep 10
 
+curl -s http://127.0.0.1:${IDLE_PORT}/profile
+curl -s http://moongtel.shop:${IDLE_PORT}/profile
+
 for RETRY_COUNT in {1..10}
 
 do
-  RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/profile)
-  UP_COUNT=$(echo ${RESPONSE} | grep 'real1' | wc -l)
+  RESPONSE=$(curl -s http://moongtel.shop:${IDLE_PORT}/profile)
+  UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
   then
