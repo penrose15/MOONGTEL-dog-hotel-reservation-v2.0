@@ -78,7 +78,7 @@ for RETRY_COUNT in {1..10}
 
 do
   RESPONSE=$(curl -s http://127.0.0.1:${IDLE_PORT}/profile)
-  UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
+  UP_COUNT=$(echo ${RESPONSE} | grep 'real1' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
   then
