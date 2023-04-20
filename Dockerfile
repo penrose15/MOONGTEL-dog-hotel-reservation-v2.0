@@ -9,7 +9,9 @@ ENV YML="real1"
 EXPOSE 8080
 EXPOSE 8081
 
-RUN apt-get update && apt-get install -y sudo
+RUN yum update && yum install -y sudo
+
+RUN yum -y install psmisc
 
 RUN adduser --disabled-password --gecos "" user  \
         && echo 'user:user' | chpasswd \
