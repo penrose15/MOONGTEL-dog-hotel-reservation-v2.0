@@ -16,14 +16,14 @@ sudo docker pull admin1125/hsj:1.0
 
 docker run -d --name myredis -p 6379:6379 redis
 
-HEALTH_CHECK_URL="http://localhost/test"
+HEALTH_CHECK_URL="http://127.0.0.1/test"
 
 blue_port=8080
 green_port=8081
 
 function find_idle_profile() {
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
-    echo ${HTTP_STATUS}
+    echo "> ${HTTP_STATUS}"
 
       if [ ${HTTP_STATUS} -ge 400 ]
 
