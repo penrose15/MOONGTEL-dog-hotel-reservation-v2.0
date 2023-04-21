@@ -97,9 +97,7 @@ do
   sleep 5
 done
 
-sudo chmod 777 /etc/nginx/conf.d/service-url.inc
-
-echo "sudo set \$service_url http://127.0.0.1:${IDLE_PORT};" > /etc/nginx/conf.d/service-url.inc
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
 sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
