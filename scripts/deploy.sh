@@ -97,7 +97,7 @@ do
   sleep 5
 done
 
-sudo chmod +x /etc/nginx/conf.d/service-url.inc
+sudo chmod 777 /etc/nginx/conf.d/service-url.inc
 
 echo "sudo set \$service_url http://127.0.0.1:${IDLE_PORT};" > /etc/nginx/conf.d/service-url.inc
 sudo service nginx reload
