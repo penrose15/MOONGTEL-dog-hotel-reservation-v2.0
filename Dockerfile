@@ -11,8 +11,6 @@ EXPOSE 8081
 
 RUN apt-get update && apt-get install -y sudo
 
-RUN apt-get install -y psmisc
-
 RUN adduser --disabled-password --gecos "" user  \
         && echo 'user:user' | chpasswd \
         && adduser user sudo \

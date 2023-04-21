@@ -62,7 +62,7 @@ function find_idle_port() {
 IDLE_PORT=$(find_idle_port)
 echo "${y}"
 
-echo "docker run -e YML=${y} --name hsj admin1125/hsj:1.0"
+echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} -e YML=${y} --name hsj admin1125/hsj:1.0"
 docker run -d -p ${IDLE_PORT}:${IDLE_PORT} -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
