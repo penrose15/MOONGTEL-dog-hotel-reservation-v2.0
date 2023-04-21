@@ -107,10 +107,8 @@ echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 if [ "${IDLE_PORT}" == "${blue_port}" ]
 then
-    PID=$(netstat -lntp grep ${green_port} | grep | LISTEN)
     fuser -s -k ${green_port}/tcp
 else
-    PID=$(netstat -lntp grep ${blue_port} | grep | LISTEN)
     fuser -s -k ${blue_port}/tcp
 fi
 echo "Kill the process on the opposite server."
