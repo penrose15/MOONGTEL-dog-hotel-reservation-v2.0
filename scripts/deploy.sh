@@ -104,12 +104,13 @@ sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 
-
 if [ "${IDLE_PORT}" == "${blue_port}" ]
 then
-    fuser -s -k ${green_port}/tcp
+    PID=$(sudo lsof -ti tcp:${green_port})
+    kill -15 ${PID}
 else
-    fuser -s -k ${blue_port}/tcp
+    PID=$(sudo lsof -ti tcp:${blue_port})
+    kill -15 ${PID}
 fi
 echo "Kill the process on the opposite server."
 
