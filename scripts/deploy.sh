@@ -62,8 +62,8 @@ function find_idle_port() {
 IDLE_PORT=$(find_idle_port)
 echo "${y}"
 
-echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -p ${IDLE_PORT}:${IDLE_PORT} -e YML=${y} --name hsj admin1125/hsj:1.0
+echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
+docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
@@ -103,15 +103,5 @@ echo "sudo set \$service_url http://127.0.0.1:${IDLE_PORT};" > /etc/nginx/conf.d
 sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
-
-if [ "${IDLE_PORT}" == "${blue_port}" ]
-then
-    PID=$(sudo lsof -ti tcp:${green_port})
-    kill -15 ${PID}
-else
-    PID=$(sudo lsof -ti tcp:${blue_port})
-    kill -15 ${PID}
-fi
-echo "Kill the process on the opposite server."
 
 docker rmi -f $(docker images -f "dangling=true" -q) || true
