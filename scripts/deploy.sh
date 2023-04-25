@@ -26,14 +26,14 @@ function find_idle_profile() {
 
       fi
 
-      if [ "${CURRENT_PROFILE}" == real1 ]
+      if [[ ${CURRENT_PROFILE} == real1 ]]
       then
         IDLE_PROFILE=real2
       else
         IDLE_PROFILE=real1
       fi
 
-      echo "> ${IDLE_PROFILE}"
+      echo ">>> ${IDLE_PROFILE}"
 
 }
 
@@ -41,7 +41,7 @@ function find_idle_port() {
     IDLE_PROFILE=$(find_idle_profile)
     echo "> ${IDLE_PROFILE}"
 
-    if [ "${IDLE_PROFILE}" == real1 ]
+    if [[ ${IDLE_PROFILE} == real1 ]]
     then
       echo "8080"
       y="real1"
@@ -52,7 +52,7 @@ function find_idle_port() {
 }
 
 IDLE_PORT=$(find_idle_port)
-echo "${y}"
+echo "yml : ${y}"
 
 echo "> $IDLE_PORT에서 구동중인 어플리케이션 PID 확인"
 IDLE_PID=$(sudo lsof -ti tcp:"${IDLE_PORT}")
@@ -70,8 +70,8 @@ fi
 # 기존 이미지 삭제
 echo "sudo docker rmi admin1125/hsj:1"
 sudo docker rmi admin1125/hsj:1
-echo "> docker build -t admin1125/hsj:1 --build-arg YML='${IDLE_PROFILE}' ."
-docker build -t admin1125/hsj:1 --build-arg YML="${IDLE_PROFILE}" .
+echo "> docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} ."
+docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} .
 
 docker run -d --name myredis -p 6379:6379 redis
 
