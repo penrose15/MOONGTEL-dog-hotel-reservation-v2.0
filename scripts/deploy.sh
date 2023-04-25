@@ -62,8 +62,21 @@ function find_idle_port() {
 IDLE_PORT=$(find_idle_port)
 echo "${y}"
 
-echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
+echo "> $IDLE_PORT에서 구동중인 어플리케이션 PID 확인"
+IDLE_PID=$(sudo lsof -ti tcp:${IDLE_PORT})
+echo "> ${IDLE_PID}"
+
+if [ -z ${IDLE_PID} ]
+then
+  echo "> 현재 구동중인 어플리케이션이 없으므로 종료하지 않습니다."
+else
+  echo "> kill -15 `sudo lsof -i:8081 | grep docker-pr | grep -v grep | awk '{print $2}'`"
+  sudo kill -15 `sudo lsof -i:8081 | grep docker-pr | grep -v grep | awk '{print $2}'`
+  sleep 5
+fi
+
+echo "docker run -d -p 8080:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
+docker run -d -p 8080:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
@@ -95,11 +108,13 @@ do
 
   echo ">health check fail, wait 5 sec..."
   sleep 5
+
 done
 
 echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
 sudo service nginx reload
 echo "Switch the reverse proxy direction of nginx to localhost 🔄"
+
 
 
 docker rmi -f $(docker images -f "dangling=true" -q) || true
