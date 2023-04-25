@@ -14,7 +14,7 @@ green_port=8081
 
 function find_idle_profile() {
     HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${HEALTH_CHECK_URL})
-    echo "> ${HTTP_STATUS}"
+    echo "> '${HTTP_STATUS}'"
 
       if [ ${HTTP_STATUS} -ge 400 ]
 
@@ -32,30 +32,23 @@ function find_idle_profile() {
       else
         IDLE_PROFILE=real1
       fi
-
-      echo ">>> ${IDLE_PROFILE}"
-
 }
 
 function find_idle_port() {
     IDLE_PROFILE=$(find_idle_profile)
-    echo "> ${IDLE_PROFILE}"
 
     if [[ ${IDLE_PROFILE} == real1 ]]
     then
       echo "8080"
-      y="real1"
     else
       echo "8081"
-      y="real2"
     fi
 }
 
 IDLE_PORT=$(find_idle_port)
-echo "yml : ${y}"
 
 echo "> $IDLE_PORT에서 구동중인 어플리케이션 PID 확인"
-IDLE_PID=$(sudo lsof -ti tcp:"${IDLE_PORT}")
+IDLE_PID=$(sudo lsof -ti tcp:IDLE_PORT)
 echo "> ${IDLE_PID}"
 
 if [ -z "${IDLE_PID}" ]
@@ -70,15 +63,13 @@ fi
 # 기존 이미지 삭제
 echo "sudo docker rmi admin1125/hsj:1"
 sudo docker rmi admin1125/hsj:1
-echo "> docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} ."
-docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} .
+echo "> docker build -t admin1125/hsj:1 --build-arg YML='$IDLE_PROFILE' ."
+docker build -t admin1125/hsj:1 --build-arg YML="$IDLE_PROFILE" .
 
 docker run -d --name myredis -p 6379:6379 redis
 
 
-echo "docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 .
-
-"
+echo "docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 ."
 docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 .
 
 docker rmi admin1125/hsj:1
