@@ -111,9 +111,9 @@ do
 
 done
 
-echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
-sudo service nginx reload
-echo "Switch the reverse proxy direction of nginx to localhost 🔄"
+#echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
+#sudo service nginx reload
+#echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 
 
