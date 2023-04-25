@@ -39,8 +39,9 @@ function find_idle_profile() {
 
 function find_idle_port() {
     IDLE_PROFILE=$(find_idle_profile)
+    echo "> ${IDLE_PROFILE}"
 
-    if [ ${IDLE_PROFILE} == real1 ]
+    if [[ ${IDLE_PROFILE} == real1 ]]
     then
       echo "8080"
       y="real1"
@@ -69,13 +70,15 @@ fi
 # 기존 이미지 삭제
 echo "sudo docker rmi admin1125/hsj:1"
 sudo docker rmi admin1125/hsj:1
-echo "> docker build --build-arg YML=${IDLE_PROFILE} admin1125/hsj:1 ."
+echo "> docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} ."
 docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} .
 
 docker run -d --name myredis -p 6379:6379 redis
 
 
-echo "docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 ."
+echo "docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 .
+
+"
 docker run -d -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0 .
 
 docker rmi admin1125/hsj:1
