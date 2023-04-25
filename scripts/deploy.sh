@@ -75,8 +75,8 @@ else
   sleep 5
 fi
 
-echo "docker run -d -p 8080:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -d -p 8080:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
+echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
+docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
