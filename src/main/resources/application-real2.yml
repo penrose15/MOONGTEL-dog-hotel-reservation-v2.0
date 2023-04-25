@@ -1,6 +1,6 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
-  profiles:
-    include: /reservation/application-db.yml
+  config:
+    import: /home/ec2-user/reservation/application-db.yml

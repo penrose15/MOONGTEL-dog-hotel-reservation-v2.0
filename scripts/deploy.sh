@@ -5,16 +5,7 @@ sudo docker ps -a -q --filter "name=hsj" | grep -q . && docker stop hsj && docke
 
 sudo docker ps -a -q --filter "name=myredis" | grep -q . && docker stop myredis && docker rm myredis | true
 
-# 기존 이미지 삭제
-echo "sudo docker rmi admin1125/hsj:1.0"
-sudo docker rmi admin1125/hsj:1.0
 
-# 도커허브 이미지 pull
-echo "sudo docker pull admin1125/hsj:1.0"
-sudo docker pull admin1125/hsj:1.0
-
-
-docker run -d --name myredis -p 6379:6379 redis
 
 HEALTH_CHECK_URL="http://127.0.0.1/test"
 
@@ -75,8 +66,19 @@ else
   sleep 5
 fi
 
-echo "docker run -d -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0"
-docker run -p ${IDLE_PORT}:${IDLE_PORT} --rm -e YML=${y} --name hsj admin1125/hsj:1.0
+# 기존 이미지 삭제
+echo "sudo docker rmi admin1125/hsj:1.0"
+sudo docker rmi admin1125/hsj:1.0
+
+docker build -t --build-arg YML=${IDLE_PROFILE} admin1125/hsj:1 .
+
+docker run -d --name myredis -p 6379:6379 redis
+
+
+echo "docker run -d -p ${IDLE_PORT}:8080 --name hsj --rm admin1125/hsj:1.0"
+docker run -p ${IDLE_PORT}:8080 --rm --name hsj admin1125/hsj:1.0
+
+docker rmi admin1125/hsj:1
 
 echo ">health check start"
 echo "IDLE_PORT: $IDLE_PORT"
@@ -111,9 +113,9 @@ do
 
 done
 
-#echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
-#sudo service nginx reload
-#echo "Switch the reverse proxy direction of nginx to localhost 🔄"
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
+sudo service nginx reload
+echo "Switch the reverse proxy direction of nginx to localhost 🔄"
 
 
 

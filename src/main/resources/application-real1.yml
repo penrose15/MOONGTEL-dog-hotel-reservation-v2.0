@@ -3,4 +3,4 @@ server:
 
 spring:
   config:
-    import: /reservation/application-db.yml
+    import: /home/ec2-user/reservation/application-db.yml
