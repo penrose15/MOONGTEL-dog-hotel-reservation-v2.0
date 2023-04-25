@@ -69,8 +69,8 @@ fi
 # 기존 이미지 삭제
 echo "sudo docker rmi admin1125/hsj:1"
 sudo docker rmi admin1125/hsj:1
-
-docker build --build-arg YML=${IDLE_PROFILE} admin1125/hsj:1 .
+echo "> docker build --build-arg YML=${IDLE_PROFILE} admin1125/hsj:1 ."
+docker build -t admin1125/hsj:1 --build-arg YML=${IDLE_PROFILE} .
 
 docker run -d --name myredis -p 6379:6379 redis
 
